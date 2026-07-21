@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin - FallSense</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f4f7fe;
+            color: #333;
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: white;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #1976d2;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .sidebar-header i {
+            color: #ff3b3b;
+        }
+
+        .nav-links {
+            padding: 20px 15px;
+            flex-grow: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            color: #64748b;
+            font-weight: 500;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: #eff6ff;
+            color: #1976d2;
+        }
+
+        .nav-item i {
+            font-size: 18px;
+        }
+
+        /* Logout Button Sidebar */
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px 15px;
+            background: #fee2e2;
+            color: #ef4444;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex-grow: 1;
+            margin-left: 260px;
+            padding: 30px 40px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            color: #0f172a;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .user-profile i {
+            font-size: 20px;
+            color: #1976d2;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.02);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border-left: 5px solid #1976d2;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+        }
+
+        .stat-info h3 {
+            font-size: 28px;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+
+        .stat-info p {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Tables & Sections */
+        .section-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.02);
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 15px;
+            background: #f8fafc;
+            color: #64748b;
+            font-weight: 600;
+            font-size: 13px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+            font-size: 14px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Badges */
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-tinggi {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .badge-sedang {
+            background: #fef3c7;
+            color: #f59e0b;
+        }
+
+        .badge-aktif {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        /* Action Buttons */
+        .btn-action {
+            background: #f1f5f9;
+            color: #64748b;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-right: 5px;
+        }
+
+        .btn-action:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        @media(max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <i class="bi bi-heart-pulse-fill"></i> FallSense
+        </div>
+        <div class="nav-links">
+            <a href="{{ route('dashboard') }}" class="nav-item active"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+            <a href="{{ route('admin.akun') }}" class="nav-item"><i class="bi bi-people-fill"></i> Manajemen Akun</a>
+            <a href="#" class="nav-item"><i class="bi bi-smartwatch"></i> Alat (ESP32)</a>
+            <a href="#" class="nav-item"><i class="bi bi-shield-exclamation"></i> Log Sistem</a>
+        </div>
+        <div class="sidebar-footer">
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="logout-btn">
+                    <i class="bi bi-box-arrow-right"></i> Keluar
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <!-- Header -->
+        <header class="page-header">
+            <div>
+                <h1>Pusat Kendali Admin</h1>
+                <p style="color: #64748b; font-size: 14px; margin-top: 5px;">Pantau seluruh aktivitas aplikasi dan
+                    perangkat keras secara global.</p>
+            </div>
+            <div class="user-profile">
+                <i class="bi bi-person-circle"></i>
+                <span style="font-weight: 600; font-size: 14px; color: #334155;">{{ Auth::user()->name }}</span>
+            </div>
+        </header>
+
+        <!-- Widget Statistik Utama -->
+        <div class="stats-grid">
+            <div class="stat-card" style="border-color: #3b82f6;">
+                <div class="stat-icon" style="background: #eff6ff; color: #3b82f6;"><i class="bi bi-people-fill"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ $totalPengguna }}</h3>
+                    <p>Akun Terdaftar</p>
+                </div>
+            </div>
+            <div class="stat-card" style="border-color: #10b981;">
+                <div class="stat-icon" style="background: #dcfce7; color: #10b981;"><i
+                        class="bi bi-person-wheelchair"></i></div>
+                <div class="stat-info">
+                    <h3>{{ $totalPasien }}</h3>
+                    <p>Lansia Dipantau</p>
+                </div>
+            </div>
+            <div class="stat-card" style="border-color: #8b5cf6;">
+                <div class="stat-icon" style="background: #f3e8ff; color: #8b5cf6;"><i class="bi bi-cpu-fill"></i></div>
+                <div class="stat-info">
+                    <h3>{{ $totalPerangkat }}</h3>
+                    <p>Perangkat Node (IoT)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabel Daftar Pasien & Perangkat -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title"><i class="bi bi-journal-medical text-primary"></i> Daftar Lansia & Perangkat
+                    Aktif</div>
+                <button class="btn-action" style="background: #1976d2; color: white;"><i class="bi bi-plus-lg"></i>
+                    Tambah Data</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>NAMA LANSIA</th>
+                        <th>USIA/JK</th>
+                        <th>KELUARGA (PENGELOLA)</th>
+                        <th>MAC ADDRESS ALAT</th>
+                        <th>STATUS</th>
+                        <th>AKSI</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($daftarPasien as $pas)
+                        <tr>
+                            <td style="font-weight: 600;">{{ $pas->nama_lengkap }}</td>
+                            <td>{{ $pas->usia }} Thn / {{ $pas->jenis_kelamin }}</td>
+                            <td>
+                                <i class="bi bi-person text-secondary"></i> {{ $pas->user->name ?? '-' }}<br>
+                                <small style="color: #94a3b8;">{{ $pas->user->no_telepon ?? '-' }}</small>
+                            </td>
+                            <td style="font-family: monospace; color: #8b5cf6; font-weight: 600;">
+                                {{ $pas->perangkats->first()->mac_address ?? 'Belum Binding' }}
+                            </td>
+                            <td><span class="badge badge-aktif">Aktif</span></td>
+                            <td>
+                                <button class="btn-action" title="Edit Data"><i class="bi bi-pencil"></i></button>
+                                <button class="btn-action" title="Hapus Data" style="color: #ef4444;"><i
+                                        class="bi bi-trash"></i></button>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #64748b;">Belum ada data pasien/lansia
+                                terdaftar di sistem.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tabel Log Kejadian (Global) -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title"><i class="bi bi-exclamation-triangle-fill text-danger"></i> Log Indikasi
+                    Jatuh Terbaru (Global)</div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>WAKTU KEJADIAN</th>
+                        <th>PASIEN (KORBAN)</th>
+                        <th>JENIS KEJADIAN</th>
+                        <th>KEPARAHAN</th>
+                        <th>TINDAKAN</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($semuaKejadian as $kejadian)
+                        <tr>
+                            <td>{{ \Carbon\Carbon::parse($kejadian->created_at)->translatedFormat('d M Y, H:i') }}</td>
+                            <td style="font-weight: 600;">{{ $kejadian->pasien->nama_lengkap ?? 'Unknown' }}</td>
+                            <td>{{ $kejadian->jenis_kejadian }}</td>
+                            <td>
+                                <span
+                                    class="badge {{ strtolower($kejadian->tingkat_keparahan) == 'tinggi' ? 'badge-tinggi' : 'badge-sedang' }}">
+                                    {{ $kejadian->tingkat_keparahan }}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn-action" title="Lihat Detail Log"><i class="bi bi-search"></i> Detail
+                                    Sensor</button>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: #64748b;">Sistem aman. Belum ada log
+                                kejadian dari seluruh Node.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+</body>
+
+</html>
