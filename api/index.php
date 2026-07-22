@@ -1,12 +1,10 @@
 <?php
 
-// Tampilkan semua error untuk debugging secara transparan
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 try {
-    // 1. Tentukan direktori penyimpanan sementara di Vercel (/tmp)
     $_ENV['APP_STORAGE'] = '/tmp/storage';
 
     if (!is_dir('/tmp/storage')) {
@@ -20,6 +18,9 @@ try {
 
     $_SERVER['SCRIPT_NAME'] = '/index.php';
 
+    // ⬇️ INI YANG HILANG — wajib ada sebelum load bootstrap/app.php
+    require __DIR__ . '/../vendor/autoload.php';
+
     // 2. Muat inti aplikasi Laravel
     $app = require_once __DIR__ . '/../bootstrap/app.php';
 
@@ -28,16 +29,13 @@ try {
     }
 
     $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
-
     $request = Illuminate\Http\Request::capture();
 
-    // 3. Tangkap error secara langsung saat Kernel menangani request
     try {
         $response = $kernel->handle($request);
         $response->send();
         $kernel->terminate($request, $response);
     } catch (\Throwable $innerException) {
-        // Cetak error asli Laravel langsung di layar browser
         header("HTTP/1.1 500 Internal Server Error");
         echo "<h1 style='color: red;'>💥 Laravel Kernel Exception:</h1>";
         echo "<p><b>Pesan:</b> " . htmlspecialchars($innerException->getMessage()) . "</p>";
@@ -47,7 +45,6 @@ try {
     }
 
 } catch (\Throwable $e) {
-    // Cetak error bootstrapping jika terjadi sebelum kernel dimuat
     header("HTTP/1.1 500 Internal Server Error");
     echo "<h1 style='color: red;'>💥 Fatal Bootstrapping Error:</h1>";
     echo "<p><b>Pesan:</b> " . htmlspecialchars($e->getMessage()) . "</p>";
