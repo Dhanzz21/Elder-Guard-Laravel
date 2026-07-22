@@ -24,7 +24,6 @@
                 real-time menggunakan wearable device berbasis ESP32.
             </p>
 
-            <img src="{{ asset('assets/images/login-illustration.svg') }}" class="illustration" alt="Illustration">
 
         </div>
 
@@ -92,7 +91,7 @@
                         </button>
 
                         <!-- Tombol Daftar diubah menjadi tag <a> yang menuju halaman register,
-                             tetapi tetap menggunakan class CSS milik Anda agar gayanya sama persis -->
+                                                 tetapi tetap menggunakan class CSS milik Anda agar gayanya sama persis -->
                         <a href="{{ route('register') }}" class="login-btn"
                             style="margin-top: 15px; text-decoration: none; text-align: center; display: block;">
                             Daftar
