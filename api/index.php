@@ -1,6 +1,6 @@
 <?php
 
-// Tampilkan error transparan untuk debugging secara total
+// Tampilkan semua error untuk debugging secara transparan
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -37,7 +37,7 @@ try {
         $response->send();
         $kernel->terminate($request, $response);
     } catch (\Throwable $innerException) {
-        // Jika error terjadi di dalam middleware atau controller Laravel
+        // Cetak error asli Laravel langsung di layar browser
         header("HTTP/1.1 500 Internal Server Error");
         echo "<h1 style='color: red;'>💥 Laravel Kernel Exception:</h1>";
         echo "<p><b>Pesan:</b> " . htmlspecialchars($innerException->getMessage()) . "</p>";
@@ -47,7 +47,7 @@ try {
     }
 
 } catch (\Throwable $e) {
-    // Jika error terjadi sebelum kernel dimuat
+    // Cetak error bootstrapping jika terjadi sebelum kernel dimuat
     header("HTTP/1.1 500 Internal Server Error");
     echo "<h1 style='color: red;'>💥 Fatal Bootstrapping Error:</h1>";
     echo "<p><b>Pesan:</b> " . htmlspecialchars($e->getMessage()) . "</p>";
