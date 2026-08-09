@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manajemen Akun - FallSense</title>
+    <title>Manajemen Alat - FallSense</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
 
@@ -24,7 +24,6 @@
             overflow-x: hidden;
         }
 
-        /* Sidebar Sama Seperti Dashboard Admin */
         .sidebar {
             width: 260px;
             background: white;
@@ -113,7 +112,6 @@
             color: #0f172a;
         }
 
-        /* Card & Table */
         .section-card {
             background: white;
             padding: 25px;
@@ -160,17 +158,12 @@
             font-weight: 600;
         }
 
-        .badge-role {
-            background: #f3e8ff;
-            color: #8b5cf6;
-        }
-
-        .badge-login {
+        .badge-aktif {
             background: #dcfce7;
             color: #16a34a;
         }
 
-        .badge-logout {
+        .badge-mati {
             background: #fee2e2;
             color: #ef4444;
         }
@@ -193,10 +186,6 @@
             color: white;
         }
 
-        .btn-primary:hover {
-            background: #1565c0;
-        }
-
         .btn-edit {
             background: #fef3c7;
             color: #d97706;
@@ -209,7 +198,6 @@
             padding: 6px 12px;
         }
 
-        /* Modals Kustom */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -239,7 +227,6 @@
             max-width: 90%;
             transform: translateY(-20px);
             transition: transform 0.3s;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
         }
 
         .modal-overlay.active .modal-box {
@@ -268,11 +255,6 @@
             font-size: 14px;
         }
 
-        .form-group input:focus,
-        .form-group select:focus {
-            border-color: #1976d2;
-        }
-
         .modal-footer {
             display: flex;
             justify-content: flex-end;
@@ -285,15 +267,11 @@
             color: #475569;
         }
 
-        /* Alert Notifikasi */
         .alert {
             padding: 15px 20px;
             border-radius: 10px;
             margin-bottom: 20px;
             font-weight: 500;
-        }
-
-        .alert-success {
             background: #dcfce7;
             color: #16a34a;
             border-left: 4px solid #16a34a;
@@ -307,9 +285,8 @@
         <div class="sidebar-header"><i class="bi bi-heart-pulse-fill"></i> FallSense</div>
         <div class="nav-links">
             <a href="{{ route('dashboard') }}" class="nav-item"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
-            <a href="{{ route('admin.akun') }}" class="nav-item active"><i class="bi bi-people-fill"></i> Manajemen
-                Akun</a>
-            <a href="{{ route('admin.alat') }}" class="nav-item "><i class="bi bi-smartwatch"></i> Alat
+            <a href="{{ route('admin.akun') }}" class="nav-item"><i class="bi bi-people-fill"></i> Manajemen Akun</a>
+            <a href="{{ route('admin.alat') }}" class="nav-item active"><i class="bi bi-smartwatch"></i> Alat
                 (ESP32)</a>
             <a href="{{ route('admin.log') }}" class="nav-item"><i class="bi bi-shield-exclamation"></i> Log Sistem</a>
         </div>
@@ -324,89 +301,71 @@
     <main class="main-content">
         <header class="page-header">
             <div>
-                <h1>Manajemen Akun Pengguna</h1>
-                <p style="color: #64748b; font-size: 14px; margin-top: 5px;">Kelola data Keluarga dan Pasien secara
-                    penuh.</p>
+                <h1>Manajemen Perangkat Alat</h1>
+                <!-- REVISI: Penjelasan bentuk fisik alat -->
+                <p style="color: #64748b; font-size: 14px; margin-top: 5px;">Kelola modul ESP32 (Sabuk Lengan Atas &
+                    Kabel Sensor Dada) dan hubungkan dengan lansia.</p>
             </div>
         </header>
 
         @if (session('success'))
-            <div class="alert alert-success"><i class="bi bi-check-circle-fill"></i> {{ session('success') }}</div>
+            <div class="alert"><i class="bi bi-check-circle-fill"></i> {{ session('success') }}</div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert" style="background: #fee2e2; color: #ef4444; border-left-color: #ef4444;">
+                <ul style="margin-left: 20px;">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
         @endif
 
         <div class="section-card">
             <div class="section-header">
-                <h3 style="font-size: 18px; color: #0f172a;"><i class="bi bi-person-lines-fill text-primary"></i> Daftar
-                    Akun Terdaftar</h3>
-                <button class="btn btn-primary" onclick="openModal('modalAdd')"><i class="bi bi-person-plus-fill"></i>
-                    Tambah Akun</button>
+                <h3 style="font-size: 18px; color: #0f172a;"><i class="bi bi-cpu text-primary"></i> Daftar Sabuk Alat
+                    Terdaftar</h3>
+                <button class="btn btn-primary" onclick="openModal('modalAdd')"><i class="bi bi-plus-lg"></i> Tambah
+                    Alat</button>
             </div>
             <table>
                 <thead>
                     <tr>
-                        <th>NAMA PENGGUNA</th>
-                        <th>EMAIL LOG-IN</th>
-                        <th>ROLE AKSES</th>
-                        <th>TANGGAL DAFTAR</th>
+                        <th>NAMA ALAT</th>
+                        <th>MAC ADDRESS (ESP32)</th>
+                        <th>DIPAKAI OLEH</th>
+                        <th>STATUS KONEKSI</th>
                         <th>AKSI</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($users as $user)
+                    @forelse($perangkats as $alat)
                         <tr>
-                            <td style="font-weight: 600;">{{ $user->name }}</td>
-                            <td>{{ $user->email }}</td>
-                            <td><span class="badge badge-role">{{ strtoupper($user->role) }}</span></td>
-                            <td>{{ \Carbon\Carbon::parse($user->created_at)->format('d M Y') }}</td>
+                            <td style="font-weight: 600;">{{ $alat->nama_perangkat }}</td>
+                            <td style="font-family: monospace; color: #8b5cf6; font-weight: 600;">
+                                {{ $alat->mac_address }}</td>
                             <td>
-                                <button class="btn btn-edit"
-                                    onclick="openEditModal({{ $user->id }}, '{{ $user->name }}', '{{ $user->email }}', '{{ $user->role }}')"
-                                    title="Edit Akun"><i class="bi bi-pencil-fill"></i></button>
-                                <button class="btn btn-delete" onclick="openDeleteModal({{ $user->id }})"
-                                    title="Hapus Akun"><i class="bi bi-trash3-fill"></i></button>
+                                <i class="bi bi-person text-secondary"></i>
+                                {{ $alat->pasien->nama_lengkap ?? 'Belum Di-assign' }}
                             </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" style="text-align: center;">Belum ada pengguna terdaftar.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-
-        <div class="section-card" style="margin-top: 30px;">
-            <div class="section-header">
-                <h3 style="font-size: 18px; color: #0f172a;"><i class="bi bi-clock-history text-primary"></i> Riwayat
-                    Login & Logout (Sistem)</h3>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>WAKTU AKTIVITAS</th>
-                        <th>PENGGUNA</th>
-                        <th>ROLE</th>
-                        <th>STATUS AKTIVITAS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($logs as $log)
-                        <tr>
-                            <td>{{ \Carbon\Carbon::parse($log->created_at)->translatedFormat('d M Y, H:i:s') }}</td>
-                            <td style="font-weight: 600;">{{ $log->user->name ?? 'User Dihapus' }}</td>
-                            <td>{{ strtoupper($log->user->role ?? 'N/A') }}</td>
                             <td>
-                                <span class="badge {{ $log->action == 'Login' ? 'badge-login' : 'badge-logout' }}">
-                                    <i
-                                        class="bi {{ $log->action == 'Login' ? 'bi-box-arrow-in-right' : 'bi-box-arrow-right' }}"></i>
-                                    Berhasil {{ $log->action }}
+                                <span
+                                    class="badge {{ $alat->status_koneksi == 'Terhubung' ? 'badge-aktif' : 'badge-mati' }}">
+                                    {{ $alat->status_koneksi }}
                                 </span>
                             </td>
+                            <td>
+                                <button class="btn btn-edit"
+                                    onclick="openEditModal({{ $alat->id }}, '{{ $alat->nama_perangkat }}', '{{ $alat->mac_address }}', '{{ $alat->pasien_id }}', '{{ $alat->status_koneksi }}')"
+                                    title="Edit Alat"><i class="bi bi-pencil-fill"></i></button>
+                                <button class="btn btn-delete" onclick="openDeleteModal({{ $alat->id }})"
+                                    title="Hapus Alat"><i class="bi bi-trash3-fill"></i></button>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" style="text-align: center;">Belum ada riwayat aktivitas di dalam sistem.
-                            </td>
+                            <td colspan="5" style="text-align: center;">Belum ada perangkat ESP32 terdaftar.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -414,93 +373,102 @@
         </div>
     </main>
 
-
-    <!-- Modal Tambah Akun -->
+    <!-- Modal Tambah Alat -->
     <div id="modalAdd" class="modal-overlay">
         <div class="modal-box">
-            <h3 style="margin-bottom: 20px;">Tambah Akun Baru</h3>
-            <form action="{{ route('admin.akun.store') }}" method="POST">
+            <h3 style="margin-bottom: 20px;">Tambah Alat Baru</h3>
+            <form action="{{ route('admin.alat.store') }}" method="POST">
                 @csrf
                 <div class="form-group">
-                    <label>Nama Lengkap</label>
-                    <input type="text" name="name" required placeholder="Masukkan nama...">
+                    <label>Nama Perangkat</label>
+                    <!-- REVISI: Placeholder menyesuaikan bentuk alat -->
+                    <input type="text" name="nama_perangkat" required
+                        placeholder="Contoh: Sabuk Lengan Kiri - Node 01">
                 </div>
                 <div class="form-group">
-                    <label>Email Akses</label>
-                    <input type="email" name="email" required placeholder="nama@email.com">
+                    <label>MAC Address ESP32</label>
+                    <input type="text" name="mac_address" required placeholder="Contoh: 30:AE:A4:07:0D:64">
                 </div>
                 <div class="form-group">
-                    <label>Role / Peran</label>
-                    <select name="role" required>
-                        <option value="keluarga">Keluarga (Admin Pengelola)</option>
-                        <option value="pasien">Pasien (Lansia)</option>
+                    <label>Dipakai Oleh (Lansia)</label>
+                    <select name="pasien_id" required>
+                        <option value="" disabled selected>-- Pilih Lansia --</option>
+                        @foreach ($pasiens as $pasien)
+                            <option value="{{ $pasien->id }}">{{ $pasien->nama_lengkap }}</option>
+                        @endforeach
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" name="password" required minlength="8" placeholder="Minimal 8 karakter">
+                    <label>Status Koneksi</label>
+                    <select name="status_koneksi" required>
+                        <option value="Terhubung">Terhubung (Online)</option>
+                        <option value="Terputus">Terputus (Offline)</option>
+                    </select>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" onclick="closeModal('modalAdd')">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan Akun</button>
+                    <button type="submit" class="btn btn-primary">Simpan Alat</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal Edit Akun -->
+    <!-- Modal Edit Alat -->
     <div id="modalEdit" class="modal-overlay">
         <div class="modal-box">
-            <h3 style="margin-bottom: 20px;">Edit Data Akun</h3>
+            <h3 style="margin-bottom: 20px;">Edit Data Alat</h3>
             <form id="formEdit" method="POST">
                 @csrf @method('PUT')
                 <div class="form-group">
-                    <label>Nama Lengkap</label>
-                    <input type="text" name="name" id="edit_name" required>
+                    <label>Nama Perangkat</label>
+                    <input type="text" name="nama_perangkat" id="edit_nama" required>
                 </div>
                 <div class="form-group">
-                    <label>Email Akses</label>
-                    <input type="email" name="email" id="edit_email" required>
+                    <label>MAC Address ESP32</label>
+                    <input type="text" name="mac_address" id="edit_mac" required>
                 </div>
                 <div class="form-group">
-                    <label>Role / Peran</label>
-                    <select name="role" id="edit_role" required>
-                        <option value="keluarga">Keluarga (Admin Pengelola)</option>
-                        <option value="pasien">Pasien (Lansia)</option>
+                    <label>Dipakai Oleh (Lansia)</label>
+                    <select name="pasien_id" id="edit_pasien" required>
+                        @foreach ($pasiens as $pasien)
+                            <option value="{{ $pasien->id }}">{{ $pasien->nama_lengkap }}</option>
+                        @endforeach
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Ubah Password <small style="color: #ef4444;">(Kosongkan jika tidak diganti)</small></label>
-                    <input type="password" name="password" placeholder="Ketik password baru...">
+                    <label>Status Koneksi</label>
+                    <select name="status_koneksi" id="edit_status" required>
+                        <option value="Terhubung">Terhubung (Online)</option>
+                        <option value="Terputus">Terputus (Offline)</option>
+                    </select>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" onclick="closeModal('modalEdit')">Batal</button>
-                    <button type="submit" class="btn btn-primary">Update Data</button>
+                    <button type="submit" class="btn btn-primary" style="background: #f59e0b;">Update Data</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal Hapus Akun -->
+    <!-- Modal Hapus Alat -->
     <div id="modalDelete" class="modal-overlay">
         <div class="modal-box" style="text-align: center;">
             <i class="bi bi-exclamation-triangle-fill" style="font-size: 50px; color: #ef4444;"></i>
-            <h3 style="margin-top: 15px;">Yakin Ingin Menghapus?</h3>
-            <p style="color: #64748b; font-size: 14px; margin-top: 10px;">Semua data yang berkaitan dengan akun ini
-                akan terhapus secara permanen dari sistem.</p>
+            <h3 style="margin-top: 15px;">Hapus Alat Ini?</h3>
+            <p style="color: #64748b; font-size: 14px; margin-top: 10px;">Semua data riwayat sensor yang dihasilkan
+                alat ini akan terhapus. Yakin?</p>
             <form id="formDelete" method="POST" style="margin-top: 25px;">
                 @csrf @method('DELETE')
                 <div class="modal-footer" style="justify-content: center;">
                     <button type="button" class="btn btn-secondary"
                         onclick="closeModal('modalDelete')">Batal</button>
-                    <button type="submit" class="btn btn-delete">Ya, Hapus Permanen</button>
+                    <button type="submit" class="btn btn-delete">Ya, Hapus</button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        // Fungsi untuk membuka dan menutup Modal Pop-up Custom
         function openModal(id) {
             document.getElementById(id).classList.add('active');
         }
@@ -509,20 +477,17 @@
             document.getElementById(id).classList.remove('active');
         }
 
-        // Fungsi khusus membuka Modal Edit (Sambil mengisi data ke dalam Form)
-        function openEditModal(id, name, email, role) {
-            document.getElementById('edit_name').value = name;
-            document.getElementById('edit_email').value = email;
-            document.getElementById('edit_role').value = role;
-
-            // Set tujuan URL formulirnya ke ID spesifik pengguna ini
-            document.getElementById('formEdit').action = '/admin/akun/' + id;
+        function openEditModal(id, nama, mac, pasien_id, status) {
+            document.getElementById('edit_nama').value = nama;
+            document.getElementById('edit_mac').value = mac;
+            document.getElementById('edit_pasien').value = pasien_id;
+            document.getElementById('edit_status').value = status;
+            document.getElementById('formEdit').action = '/admin/alat/' + id;
             openModal('modalEdit');
         }
 
-        // Fungsi khusus membuka Modal Delete
         function openDeleteModal(id) {
-            document.getElementById('formDelete').action = '/admin/akun/' + id;
+            document.getElementById('formDelete').action = '/admin/alat/' + id;
             openModal('modalDelete');
         }
     </script>

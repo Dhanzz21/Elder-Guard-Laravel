@@ -6,11 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - FallSense</title>
 
-    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -27,7 +24,6 @@
             overflow-x: hidden;
         }
 
-        /* Navbar */
         .navbar {
             background: white;
             padding: 15px 40px;
@@ -67,7 +63,6 @@
             color: white;
         }
 
-        /* Layout Grid */
         .container {
             padding: 30px 40px;
             max-width: 1400px;
@@ -77,8 +72,6 @@
             gap: 30px;
         }
 
-        /* STREAMING_CHUNK:Membuat desain kartu (card) dan profil... -->
-        /* Cards */
         .card {
             background: white;
             border-radius: 16px;
@@ -97,7 +90,6 @@
             gap: 10px;
         }
 
-        /* Patient Info */
         .patient-info {
             text-align: center;
         }
@@ -127,7 +119,6 @@
             margin-top: 10px;
         }
 
-        /* Vital Signs Grid */
         .vital-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -164,15 +155,12 @@
             color: #64748b;
         }
 
-        /* STREAMING_CHUNK:Menyusun gaya riwayat jatuh dan responsivitas... -->
-        /* Orientation Grid */
         .orient-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
         }
 
-        /* History Table */
         .history-list {
             list-style: none;
         }
@@ -226,7 +214,6 @@
         </div>
         <div style="display: flex; gap: 15px; align-items: center;">
             <span>Halo, <b>{{ Auth::user()->name }}</b></span>
-            <!-- Tombol Logout -->
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
                 <button type="submit" class="logout-btn"><i class="bi bi-box-arrow-right"></i> Logout</button>
@@ -237,23 +224,25 @@
     @if ($pasien)
         <div class="container">
 
-            <!-- Kolom Kiri -->
-            <div>
-                <!-- Info Pasien -->
+            <div class="left-column">
                 <div class="card patient-info">
                     <div class="avatar">{{ substr($pasien->nama_lengkap, 0, 1) }}</div>
                     <h2>{{ $pasien->nama_lengkap }}</h2>
                     <p style="color: #64748b; font-size: 14px;">Usia: {{ $pasien->usia }} Tahun •
                         {{ $pasien->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</p>
-                    <div class="status-badge"><i class="bi bi-activity"></i> Perangkat Aktif</div>
+                    <div class="status-badge"><i class="bi bi-activity"></i> Perangkat Aktif Dipakai</div>
                     <div style="margin-top: 15px; font-size: 12px; color: #94a3b8;">
                         ID Perangkat: {{ $pasien->perangkats->first()->mac_address ?? 'Belum ada perangkat' }}
                     </div>
                 </div>
 
-                <!-- Vital Signs -->
+                <!-- REVISI: Penambahan Keterangan Letak Sensor Tanda Vital -->
                 <div class="card">
-                    <div class="card-title"><i class="bi bi-suit-heart-fill"></i> Tanda Vital Terkini</div>
+                    <div class="card-title">
+                        <i class="bi bi-suit-heart-fill"></i> Tanda Vital
+                        <span style="font-size: 12px; color: #94a3b8; font-weight: normal; margin-left: auto;">(Via
+                            Kabel Sensor Dada)</span>
+                    </div>
                     <div class="vital-grid">
                         <div class="vital-box" style="border-top: 4px solid #ef4444;">
                             <i class="bi bi-heart-pulse text-danger" style="color: #ef4444;"></i>
@@ -269,11 +258,14 @@
                 </div>
             </div>
 
-            <!-- Kolom Kanan -->
-            <div>
-                <!-- IMU & SVM Data -->
+            <div class="right-column">
+                <!-- REVISI: Penambahan Keterangan Letak Sensor Orientasi Tubuh -->
                 <div class="card">
-                    <div class="card-title"><i class="bi bi-compass"></i> Orientasi Tubuh (Sensor Fusion 9-Axis)</div>
+                    <div class="card-title">
+                        <i class="bi bi-compass"></i> Orientasi Tubuh & Benturan
+                        <span style="font-size: 12px; color: #94a3b8; font-weight: normal; margin-left: auto;">(Via
+                            Sabuk Lengan Atas)</span>
+                    </div>
                     <div class="orient-grid">
                         <div class="vital-box">
                             <div class="vital-unit" style="margin-bottom: 5px;">Magnitude (SVM)</div>
@@ -293,15 +285,14 @@
                     </div>
                 </div>
 
-                <!-- Grafik SVM -->
                 <div class="card">
-                    <div class="card-title"><i class="bi bi-graph-up"></i> Grafik Aktivitas Real-time (SVM)</div>
+                    <div class="card-title"><i class="bi bi-graph-up"></i> Grafik Aktivitas Real-time (SVM Sabuk Lengan)
+                    </div>
                     <div style="height: 250px; width: 100%;">
                         <canvas id="svmChart"></canvas>
                     </div>
                 </div>
 
-                <!-- Riwayat Kejadian -->
                 <div class="card">
                     <div class="card-title"><i class="bi bi-clock-history"></i> Riwayat Indikasi Jatuh (Log)</div>
                     <ul class="history-list">
@@ -330,16 +321,14 @@
             </div>
         </div>
     @else
-        <!-- Tampilan Jika Belum Ada Data Pasien -->
         <div class="container" style="display: block; text-align: center; padding-top: 100px;">
             <i class="bi bi-person-x" style="font-size: 60px; color: #cbd5e1;"></i>
             <h2 style="margin-top: 20px;">Belum ada data Lansia yang dipantau.</h2>
-            <p style="color: #64748b;">Sistem mendeteksi belum ada perangkat ESP32 yang didaftarkan ke akun ini.</p>
+            <p style="color: #64748b;">Sistem mendeteksi belum ada Sabuk ESP32 yang didaftarkan ke akun ini.</p>
         </div>
     @endif
 
     <script>
-        // Inisialisasi Grafik Chart.js
         const ctx = document.getElementById('svmChart');
         let svmChart;
 
@@ -347,15 +336,15 @@
             svmChart = new Chart(ctx.getContext('2d'), {
                 type: 'line',
                 data: {
-                    labels: [], // Sumbu X (Waktu)
+                    labels: [],
                     datasets: [{
                         label: 'Nilai SVM (g)',
-                        data: [], // Sumbu Y (Nilai)
+                        data: [],
                         borderColor: '#8b5cf6',
                         backgroundColor: 'rgba(139, 92, 246, 0.1)',
                         borderWidth: 2,
                         fill: true,
-                        tension: 0.4, // Membuat garis melengkung halus
+                        tension: 0.4,
                         pointRadius: 2
                     }]
                 },
@@ -379,34 +368,28 @@
                     },
                     animation: {
                         duration: 0
-                    } // Matikan animasi agar grafik mengalir mulus
+                    }
                 }
             });
         }
 
-        // Ambil ID perangkat dari backend (Blade) untuk kebutuhan API
         const perangkatId = "{{ $pasien->perangkats->first()->id ?? '' }}";
 
-        // Fungsi fetch data sensor ke API Laravel
         async function fetchSensorData() {
             if (!perangkatId) return;
 
             try {
-                // Panggil route GET /api/sensor/latest/{id}
                 const response = await fetch(`/api/sensor/latest/${perangkatId}`);
                 const data = await response.json();
 
                 if (data && !data.error) {
-                    // Update Teks di Kotak-kotak Dashboard
                     document.getElementById('val-bpm').innerText = data.detak_jantung || '--';
                     document.getElementById('val-spo2').innerText = data.spo2 || '--';
 
-                    // Pastikan angka desimal rapi
                     if (data.svm) document.getElementById('val-svm').innerText = parseFloat(data.svm).toFixed(2);
                     if (data.pitch) document.getElementById('val-pitch').innerText = parseFloat(data.pitch).toFixed(1);
                     if (data.roll) document.getElementById('val-roll').innerText = parseFloat(data.roll).toFixed(1);
 
-                    // Update Grafik Real-Time
                     if (svmChart) {
                         const timeNow = new Date().toLocaleTimeString('id-ID', {
                             hour12: false,
@@ -418,12 +401,10 @@
                         svmChart.data.labels.push(timeNow);
                         svmChart.data.datasets[0].data.push(data.svm);
 
-                        // Geser grafik (maksimal tampilkan 15 titik)
                         if (svmChart.data.labels.length > 15) {
                             svmChart.data.labels.shift();
                             svmChart.data.datasets[0].data.shift();
                         }
-
                         svmChart.update();
                     }
                 }
@@ -432,11 +413,8 @@
             }
         }
 
-        // Mulai penarikan data secara berkala (Polling)
         if (perangkatId) {
-            // Panggil sekali saat halaman dimuat
             fetchSensorData();
-            // Ulangi panggilan setiap 3 detik (3000 ms)
             setInterval(fetchSensorData, 3000);
         }
     </script>

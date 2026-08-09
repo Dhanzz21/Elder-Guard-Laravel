@@ -22,4 +22,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/akun', [App\Http\Controllers\AdminAccountController::class, 'store'])->name('admin.akun.store');
     Route::put('/admin/akun/{id}', [App\Http\Controllers\AdminAccountController::class, 'update'])->name('admin.akun.update');
     Route::delete('/admin/akun/{id}', [App\Http\Controllers\AdminAccountController::class, 'destroy'])->name('admin.akun.destroy');
-});
+     Route::get('/admin/alat', [App\Http\Controllers\AdminAlatController::class, 'index'])->name('admin.alat');
+    Route::post('/admin/alat', [App\Http\Controllers\AdminAlatController::class, 'store'])->name('admin.alat.store');
+    Route::put('/admin/alat/{id}', [App\Http\Controllers\AdminAlatController::class, 'update'])->name('admin.alat.update');
+    Route::delete('/admin/alat/{id}', [App\Http\Controllers\AdminAlatController::class, 'destroy'])->name('admin.alat.destroy');
+    // --- Route Log Sistem ---
+    Route::get('/admin/log', [App\Http\Controllers\SystemLogController::class, 'index'])->name('admin.log');
+    });

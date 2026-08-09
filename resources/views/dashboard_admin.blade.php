@@ -236,6 +236,95 @@
             border-bottom: none;
         }
 
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-box {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 450px;
+            max-width: 90%;
+            transform: translateY(-20px);
+            transition: transform 0.3s;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: translateY(0);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #475569;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #1976d2;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        /* Alert Notifikasi */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #16a34a;
+            border-left: 4px solid #16a34a;
+        }
+
         /* Badges */
         .badge {
             padding: 5px 12px;
@@ -308,8 +397,8 @@
         <div class="nav-links">
             <a href="{{ route('dashboard') }}" class="nav-item active"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
             <a href="{{ route('admin.akun') }}" class="nav-item"><i class="bi bi-people-fill"></i> Manajemen Akun</a>
-            <a href="#" class="nav-item"><i class="bi bi-smartwatch"></i> Alat (ESP32)</a>
-            <a href="#" class="nav-item"><i class="bi bi-shield-exclamation"></i> Log Sistem</a>
+            <a href="{{ route('admin.alat') }}" class="nav-item"><i class="bi bi-smartwatch"></i> Alat (ESP32)</a>
+            <a href="{{ route('admin.log') }}" class="nav-item"><i class="bi bi-shield-exclamation"></i> Log Sistem</a>
         </div>
         <div class="sidebar-footer">
             <form action="{{ route('logout') }}" method="POST">
@@ -368,7 +457,8 @@
             <div class="section-header">
                 <div class="section-title"><i class="bi bi-journal-medical text-primary"></i> Daftar Lansia & Perangkat
                     Aktif</div>
-                <button class="btn-action" style="background: #1976d2; color: white;"><i class="bi bi-plus-lg"></i>
+                <button class="btn-action" style="background: #1976d2; color: white;" onclick="openModal('modalAdd')"><i
+                        class="bi bi-plus-lg"></i>
                     Tambah Data</button>
             </div>
             <table>
@@ -396,9 +486,16 @@
                             </td>
                             <td><span class="badge badge-aktif">Aktif</span></td>
                             <td>
-                                <button class="btn-action" title="Edit Data"><i class="bi bi-pencil"></i></button>
-                                <button class="btn-action" title="Hapus Data" style="color: #ef4444;"><i
-                                        class="bi bi-trash"></i></button>
+                                <!-- Kirim data ke JS saat diklik -->
+                                <button class="btn-action" title="Edit Data"
+                                    onclick="openEditPasien('{{ $pas->id }}', '{{ $pas->nama_lengkap }}', '{{ $pas->usia }}', '{{ $pas->jenis_kelamin }}', '{{ $pas->perangkats->first()->mac_address ?? '' }}')">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+
+                                <button class="btn-action" title="Hapus Data" style="color: #ef4444;"
+                                    onclick="openDeletePasien('{{ $pas->id }}')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
                             </td>
                         </tr>
                     @empty
@@ -410,6 +507,7 @@
                 </tbody>
             </table>
         </div>
+
 
         <!-- Tabel Log Kejadian (Global) -->
         <div class="section-card">
@@ -440,8 +538,10 @@
                                 </span>
                             </td>
                             <td>
-                                <button class="btn-action" title="Lihat Detail Log"><i class="bi bi-search"></i> Detail
-                                    Sensor</button>
+                                <button class="btn-action" title="Lihat Detail Log"
+                                    onclick="openDetailSensor('{{ $kejadian->jenis_kejadian }}', '{{ $kejadian->sensorData->svm ?? 'N/A' }}', '{{ $kejadian->sensorData->pitch ?? 'N/A' }}', '{{ $kejadian->sensorData->roll ?? 'N/A' }}')">
+                                    <i class="bi bi-search"></i> Detail Sensor
+                                </button>
                             </td>
                         </tr>
                     @empty
@@ -453,8 +553,198 @@
                 </tbody>
             </table>
         </div>
-
     </main>
+
+    <!-- Modal Tambah Data Lansia -->
+    <div id="modalAdd" class="modal-overlay">
+        <div class="modal-box">
+            <h3 style="margin-bottom: 20px;">Tambah Data Lansia & Alat</h3>
+
+            <!-- Nanti action-nya kita arahkan ke route backend -->
+            <form action="#" method="POST">
+                @csrf
+                <div class="form-group">
+                    <label>Nama Lansia</label>
+                    <input type="text" name="nama_lengkap" required placeholder="Masukkan nama...">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>Usia</label>
+                        <input type="number" name="usia" required placeholder="Contoh: 70">
+                    </div>
+                    <div class="form-group">
+                        <label>Jenis Kelamin</label>
+                        <select name="jenis_kelamin" required>
+                            <option value="L">Laki-laki</option>
+                            <option value="P">Perempuan</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>MAC Address Alat (ESP32)</label>
+                    <input type="text" name="mac_address" required placeholder="Contoh: 30:AE:A4:07:0D:64">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary"
+                        style="padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;"
+                        onclick="closeModal('modalAdd')">Batal</button>
+                    <button type="submit"
+                        style="background: #1976d2; color: white; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;">Simpan
+                        Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Edit Data -->
+    <div id="modalEditPasien" class="modal-overlay">
+        <div class="modal-box">
+            <h3 style="margin-bottom: 20px;">Edit Data Lansia</h3>
+            <form id="formEditPasien" method="POST">
+                @csrf @method('PUT')
+                <div class="form-group">
+                    <label>Nama Lansia</label>
+                    <input type="text" name="nama_lengkap" id="edit_nama_pasien" required>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>Usia</label>
+                        <input type="number" name="usia" id="edit_usia_pasien" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Jenis Kelamin</label>
+                        <select name="jenis_kelamin" id="edit_jk_pasien" required>
+                            <option value="L">Laki-laki</option>
+                            <option value="P">Perempuan</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>MAC Address Alat</label>
+                    <input type="text" name="mac_address" id="edit_mac_pasien" required>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary"
+                        style="padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;"
+                        onclick="closeModal('modalEditPasien')">Batal</button>
+                    <button type="submit"
+                        style="background: #f59e0b; color: white; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;">Update
+                        Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Hapus Data -->
+    <div id="modalDeletePasien" class="modal-overlay">
+        <div class="modal-box" style="text-align: center;">
+            <i class="bi bi-exclamation-triangle-fill" style="font-size: 50px; color: #ef4444;"></i>
+            <h3 style="margin-top: 15px;">Hapus Data Lansia?</h3>
+            <p style="color: #64748b; font-size: 14px; margin-top: 10px;">Semua data sensor dan riwayat jatuh lansia
+                ini akan ikut terhapus. Yakin?</p>
+            <form id="formDeletePasien" method="POST" style="margin-top: 25px;">
+                @csrf @method('DELETE')
+                <div class="modal-footer" style="justify-content: center;">
+                    <button type="button" class="btn-secondary"
+                        style="padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;"
+                        onclick="closeModal('modalDeletePasien')">Batal</button>
+                    <button type="submit"
+                        style="background: #ef4444; color: white; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;">Ya,
+                        Hapus Permanen</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Detail Sensor -->
+    <div id="modalSensor" class="modal-overlay">
+        <div class="modal-box">
+            <h3 style="margin-bottom: 20px;"><i class="bi bi-activity text-danger"></i> Detail Data Sensor Saat Jatuh
+            </h3>
+
+            <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                <p><strong>Jenis Kejadian:</strong> <span id="detail-jenis"></span></p>
+                <hr style="margin: 10px 0; border: 0; border-top: 1px solid #e2e8f0;">
+                <p><strong>Nilai SVM:</strong> <span id="detail-svm"
+                        style="color: #8b5cf6; font-weight: bold;"></span> g</p>
+                <p><strong>Pitch (Depan/Belakang):</strong> <span id="detail-pitch"></span>°</p>
+                <p><strong>Roll (Kanan/Kiri):</strong> <span id="detail-roll"></span>°</p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary"
+                    style="padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;"
+                    onclick="closeModal('modalSensor')">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fungsi untuk membuka dan menutup Modal Pop-up Custom
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // Fungsi khusus membuka Modal Edit (Sambil mengisi data ke dalam Form)
+        function openEditModal(id, name, email, role) {
+            document.getElementById('edit_name').value = name;
+            document.getElementById('edit_email').value = email;
+            document.getElementById('edit_role').value = role;
+
+            // Set tujuan URL formulirnya ke ID spesifik pengguna ini
+            document.getElementById('formEdit').action = '/admin/akun/' + id;
+            openModal('modalEdit');
+        }
+
+        // Fungsi khusus membuka Modal Delete
+        function openDeleteModal(id) {
+            document.getElementById('formDelete').action = '/admin/akun/' + id;
+            openModal('modalDelete');
+        }
+
+        // Fungsi untuk membuka detail sensor
+        function openDetailSensor(jenis, svm, pitch, roll) {
+            // Mengisi teks ke dalam modal
+            document.getElementById('detail-jenis').innerText = jenis;
+            document.getElementById('detail-svm').innerText = svm;
+            document.getElementById('detail-pitch').innerText = pitch;
+            document.getElementById('detail-roll').innerText = roll;
+
+            // Buka modalnya
+            openModal('modalSensor');
+        }
+
+        // Fungsi untuk Modal Edit Pasien
+        function openEditPasien(id, nama, usia, jk, mac) {
+            document.getElementById('edit_nama_pasien').value = nama;
+            document.getElementById('edit_usia_pasien').value = usia;
+            document.getElementById('edit_jk_pasien').value = jk;
+            document.getElementById('edit_mac_pasien').value = mac;
+
+            // Nanti kita arahkan form action-nya ke URL update backend
+            // document.getElementById('formEditPasien').action = '/admin/pasien/' + id;
+
+            openModal('modalEditPasien');
+        }
+
+        // Fungsi untuk Modal Delete Pasien
+        function openDeletePasien(id) {
+            // Nanti kita arahkan form action-nya ke URL delete backend
+            // document.getElementById('formDeletePasien').action = '/admin/pasien/' + id;
+
+            openModal('modalDeletePasien');
+        }
+    </script>
 
 </body>
 
