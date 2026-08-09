@@ -10,7 +10,7 @@
 
             <div class="logo">
                 <i class="bi bi-heart-pulse-fill"></i>
-                <span>ElderGuard</span>
+                <span>Fall-Sense</span>
             </div>
 
             <h1>
@@ -31,7 +31,7 @@
 
             <div class="login-card">
 
-                <h2>Welcome Back 👋</h2>
+                <h2>Selamat Datang</h2>
 
                 <p>Silakan login untuk melanjutkan.</p>
 
@@ -91,7 +91,7 @@
                         </button>
 
                         <!-- Tombol Daftar diubah menjadi tag <a> yang menuju halaman register,
-                                                 tetapi tetap menggunakan class CSS milik Anda agar gayanya sama persis -->
+                                                         tetapi tetap menggunakan class CSS milik Anda agar gayanya sama persis -->
                         <a href="{{ route('register') }}" class="login-btn"
                             style="margin-top: 15px; text-decoration: none; text-align: center; display: block;">
                             Daftar

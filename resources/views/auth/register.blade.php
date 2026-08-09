@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'Register - ElderGuard')
+@section('title', 'Register - Fall-Sense')
 
 <!-- Menambahkan CSS khusus untuk memberikan fungsi scroll pada halaman ini saja -->
 @push('styles')
