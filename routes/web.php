@@ -18,14 +18,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Dibungkus middleware 'auth' agar hanya bisa diakses setelah login
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
- Route::get('/admin/akun', [App\Http\Controllers\AdminAccountController::class, 'index'])->name('admin.akun');
-    Route::post('/admin/akun', [App\Http\Controllers\AdminAccountController::class, 'store'])->name('admin.akun.store');
-    Route::put('/admin/akun/{id}', [App\Http\Controllers\AdminAccountController::class, 'update'])->name('admin.akun.update');
-    Route::delete('/admin/akun/{id}', [App\Http\Controllers\AdminAccountController::class, 'destroy'])->name('admin.akun.destroy');
-     Route::get('/admin/alat', [App\Http\Controllers\AdminAlatController::class, 'index'])->name('admin.alat');
-    Route::post('/admin/alat', [App\Http\Controllers\AdminAlatController::class, 'store'])->name('admin.alat.store');
-    Route::put('/admin/alat/{id}', [App\Http\Controllers\AdminAlatController::class, 'update'])->name('admin.alat.update');
-    Route::delete('/admin/alat/{id}', [App\Http\Controllers\AdminAlatController::class, 'destroy'])->name('admin.alat.destroy');
-    // --- Route Log Sistem ---
-    Route::get('/admin/log', [App\Http\Controllers\SystemLogController::class, 'index'])->name('admin.log');
+     Route::get('/manajemen-pasien', [App\Http\Controllers\PasienController::class, 'index'])->name('pasien.index');
+    Route::post('/manajemen-pasien', [App\Http\Controllers\PasienController::class, 'store'])->name('pasien.store');
+    Route::put('/manajemen-pasien/{id}', [App\Http\Controllers\PasienController::class, 'update'])->name('pasien.update');
+    Route::delete('/manajemen-pasien/{id}', [App\Http\Controllers\PasienController::class, 'destroy'])->name('pasien.destroy');
     });

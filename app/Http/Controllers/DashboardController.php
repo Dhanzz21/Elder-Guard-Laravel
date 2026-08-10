@@ -13,25 +13,20 @@ use App\Models\Perangkat;
 
 class DashboardController extends Controller
 {
-    public function index()
+     public function index()
     {
         $user = Auth::user();
         
         // Cek Role: SUPER ADMIN
         if ($user->role === 'super_admin') {
-            // Gunakan metode query() di awal agar Intelephense tenang
-            $totalPengguna = User::query()->where('role', '!=', 'super_admin')->count();
-            $totalPasien = Pasien::query()->count();
-            $totalPerangkat = Perangkat::query()->count();
-            
-            // Ambil semua log kejadian terbaru dari semua pasien
-            $semuaKejadian = Kejadian::query()->with('pasien')->orderBy('created_at', 'desc')->limit(5)->get();
-            
-            // Ambil daftar semua pasien beserta info keluarga & perangkatnya
-            $daftarPasien = Pasien::query()->with(['user', 'perangkats'])->get();
+            // Ambil data global untuk dashboard admin
+            $totalPengguna = \App\Models\User::count();
+            $totalPasien = \App\Models\Pasien::count();
+            $totalPerangkat = \App\Models\Perangkat::count();
+            $daftarPasien = \App\Models\Pasien::with(['user', 'perangkats'])->latest()->limit(5)->get();
+            $semuaKejadian = \App\Models\Kejadian::with('pasien')->orderBy('created_at', 'desc')->limit(5)->get();
 
-            // Panggil view dashboard_admin.blade.php
-            return view('dashboard_admin', compact('totalPengguna', 'totalPasien', 'totalPerangkat', 'semuaKejadian', 'daftarPasien'));
+            return view('dashboard_admin', compact('totalPengguna', 'totalPasien', 'totalPerangkat', 'daftarPasien', 'semuaKejadian'));
         }
         
         // Cek Role: KELUARGA

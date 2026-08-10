@@ -4,11 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Admin - FallSense</title>
+    <title>Dashboard - FallSense</title>
 
-    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
 
     <style>
@@ -19,359 +17,517 @@
             font-family: 'Poppins', sans-serif;
         }
 
+        :root {
+            --navy: #101c3f;
+            --blue: #3b82f6;
+            --bg: #f4f7fe;
+            --ink: #0f172a;
+            --muted: #64748b;
+            --line: #e7ebf5;
+            --green: #10b981;
+            --purple: #8b5cf6;
+            --amber: #f59e0b;
+            --red: #ef4444;
+        }
+
+        .text-danger {
+            color: var(--red) !important;
+        }
+
         body {
-            background-color: #f4f7fe;
+            background-color: var(--bg);
             color: #333;
-            display: flex;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* Sidebar */
-        .sidebar {
-            width: 260px;
-            background: white;
-            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.03);
-            display: flex;
-            flex-direction: column;
+        /* --- TOPBAR --- */
+        .topbar {
             position: fixed;
-            height: 100vh;
-            z-index: 100;
-        }
-
-        .sidebar-header {
-            padding: 25px 20px;
-            font-size: 22px;
-            font-weight: 700;
-            color: #1976d2;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 72px;
+            background: var(--navy);
             display: flex;
             align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid #f1f5f9;
+            justify-content: space-between;
+            padding: 0 28px 0 20px;
+            z-index: 110;
         }
 
-        .sidebar-header i {
-            color: #ff3b3b;
+        .topbar-search {
+            flex: 1;
+            max-width: 420px;
+            margin: 0 40px;
+            position: relative;
         }
 
-        .nav-links {
-            padding: 20px 15px;
-            flex-grow: 1;
+        .topbar-search input {
+            width: 100%;
+            background: #1c2a56;
+            border: 1px solid #2b3a68;
+            color: #e6ebfb;
+            border-radius: 30px;
+            padding: 10px 16px 10px 40px;
+            font-size: 13.5px;
+            outline: none;
         }
 
-        .nav-item {
+        .topbar-search input::placeholder {
+            color: #8592b8;
+        }
+
+        .topbar-search i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8592b8;
+        }
+
+        .topbar-brand {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 15px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            color: #64748b;
-            font-weight: 500;
+            color: #fff;
+        }
+
+        .topbar-brand .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .topbar-brand span {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .topbar-bell {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #1c2a56;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #cfd8f5;
+            font-size: 17px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .topbar-bell .dot {
+            position: absolute;
+            top: 8px;
+            right: 9px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--red);
+            border: 1.5px solid var(--navy);
+        }
+
+        .topbar-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--blue);
+            color: #fff;
+            font-weight: 600;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* --- SIDEBAR (uses layouts.sidebar partial classes) --- */
+        .sidebar {
+            width: 80px;
+            background: var(--navy);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: fixed;
+            height: calc(100vh - 72px);
+            top: 72px;
+            left: 0;
+            z-index: 100;
+            padding-top: 22px;
+            border-right: 1px solid #1e2c58;
+        }
+
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            background: var(--blue);
+            color: #fff;
+            border-radius: 50%;
+            display: none;
+            /* logo already shown in topbar; hidden here to avoid duplication */
+        }
+
+        .nav-item {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 12px;
+            color: #8b98c2;
+            font-size: 21px;
+            margin-bottom: 12px;
             text-decoration: none;
-            transition: 0.3s;
+            transition: 0.2s;
         }
 
         .nav-item:hover,
         .nav-item.active {
-            background: #eff6ff;
-            color: #1976d2;
+            background: var(--blue);
+            color: #fff;
         }
 
-        .nav-item i {
-            font-size: 18px;
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-bottom: 22px;
         }
 
-        /* Logout Button Sidebar */
-        .sidebar-footer {
-            padding: 20px;
-            border-top: 1px solid #f1f5f9;
-        }
-
-        .logout-btn {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            width: 100%;
-            padding: 12px 15px;
-            background: #fee2e2;
-            color: #ef4444;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .logout-btn:hover {
-            background: #ef4444;
-            color: white;
-        }
-
-        /* Main Content */
+        /* --- MAIN --- */
         .main-content {
-            flex-grow: 1;
-            margin-left: 260px;
-            padding: 30px 40px;
+            margin-left: 80px;
+            margin-top: 72px;
+            padding: 26px 30px 40px;
         }
 
-        .page-header {
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 22px;
+            align-items: start;
+        }
+
+        @media (max-width: 1100px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px rgba(15, 23, 42, 0.04);
+            padding: 22px;
+        }
+
+        /* --- PATIENT CARD --- */
+        .patient-head {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            gap: 14px;
+            margin-bottom: 18px;
         }
 
-        .page-header h1 {
-            font-size: 24px;
-            color: #0f172a;
-        }
-
-        .user-profile {
+        .patient-avatar {
+            width: 54px;
+            height: 54px;
+            border-radius: 14px;
+            background: #eef2ff;
+            color: var(--blue);
             display: flex;
             align-items: center;
-            gap: 10px;
-            background: white;
-            padding: 8px 15px;
-            border-radius: 30px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            flex-shrink: 0;
         }
 
-        .user-profile i {
+        .patient-head h2 {
+            font-size: 18px;
+            color: var(--ink);
+            font-weight: 700;
+        }
+
+        .patient-head p {
+            font-size: 12.5px;
+            color: var(--muted);
+            margin-top: 2px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            display: inline-block;
+        }
+
+        .vitals-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .vital-box {
+            border-radius: 14px;
+            padding: 14px 16px;
+        }
+
+        .vital-box .vital-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            opacity: 0.85;
+        }
+
+        .vital-box .vital-value {
             font-size: 20px;
-            color: #1976d2;
+            font-weight: 700;
         }
 
-        /* Stats Grid */
-        .stats-grid {
+        .vital-box .vital-unit {
+            font-size: 11.5px;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .vital-heart {
+            background: #10b981;
+            color: #fff;
+        }
+
+        .vital-spo2 {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .vital-svm {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .vital-status {
+            background: #f1f5f9;
+            color: var(--ink);
+        }
+
+        .vital-status .vital-value {
+            font-size: 15px;
+        }
+
+        .device-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f8fafc;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 12px 14px;
+        }
+
+        .device-box .status-dot {
+            flex-shrink: 0;
+        }
+
+        .device-box small {
+            display: block;
+            color: var(--muted);
+            font-size: 11.5px;
+            line-height: 1.5;
+        }
+
+        .device-battery {
+            margin-left: auto;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+        }
+
+        /* --- ORIENTASI TUBUH (circular gauges) --- */
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .gauge-row {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
-            margin-bottom: 35px;
+            gap: 18px;
         }
 
-        .stat-card {
-            background: white;
-            padding: 25px;
+        .gauge-box {
+            border: 1px solid var(--line);
             border-radius: 16px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.02);
+            padding: 18px;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 20px;
-            border-left: 5px solid #1976d2;
         }
 
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 28px;
-        }
-
-        .stat-info h3 {
-            font-size: 28px;
-            color: #0f172a;
-            margin-bottom: 2px;
-        }
-
-        .stat-info p {
-            color: #64748b;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        /* Tables & Sections */
-        .section-card {
-            background: white;
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.02);
-            margin-bottom: 30px;
-            overflow-x: auto;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .section-title {
-            font-size: 18px;
+        .gauge-box .gauge-label {
+            font-size: 12px;
             font-weight: 600;
-            color: #0f172a;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 10px;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 600px;
+        .gauge-ring {
+            position: relative;
+            width: 130px;
+            height: 130px;
         }
 
-        th {
-            text-align: left;
-            padding: 12px 15px;
-            background: #f8fafc;
-            color: #64748b;
-            font-weight: 600;
-            font-size: 13px;
-            border-bottom: 1px solid #e2e8f0;
+        .gauge-ring svg {
+            transform: rotate(-90deg);
         }
 
-        td {
-            padding: 15px;
-            border-bottom: 1px solid #f1f5f9;
-            color: #334155;
-            font-size: 14px;
+        .gauge-ring circle.bg {
+            stroke: #eef1f8;
         }
 
-        tr:last-child td {
-            border-bottom: none;
+        .gauge-ring circle.fg {
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.6s ease;
         }
 
-        .modal-overlay {
-            position: fixed;
+        .gauge-value {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            display: none;
+            display: flex;
             align-items: center;
             justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--ink);
         }
 
-        .modal-overlay.active {
-            display: flex;
-            opacity: 1;
+        .gauge-sub {
+            margin-top: 10px;
+            font-size: 11.5px;
+            color: var(--muted);
         }
 
-        .modal-box {
-            background: white;
-            padding: 30px;
-            border-radius: 16px;
-            width: 450px;
-            max-width: 90%;
-            transform: translateY(-20px);
-            transition: transform 0.3s;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        /* --- BOTTOM ANALYSIS CARDS --- */
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-top: 22px;
         }
 
-        .modal-overlay.active .modal-box {
-            transform: translateY(0);
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #475569;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            outline: none;
-            font-size: 14px;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            border-color: #1976d2;
-        }
-
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 25px;
-        }
-
-        .btn-secondary {
-            background: #f1f5f9;
-            color: #475569;
-        }
-
-        /* Alert Notifikasi */
-        .alert {
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-weight: 500;
-        }
-
-        .alert-success {
-            background: #dcfce7;
-            color: #16a34a;
-            border-left: 4px solid #16a34a;
-        }
-
-        /* Badges */
-        .badge {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .badge-tinggi {
-            background: #fee2e2;
-            color: #ef4444;
-        }
-
-        .badge-sedang {
-            background: #fef3c7;
-            color: #f59e0b;
-        }
-
-        .badge-aktif {
-            background: #dcfce7;
-            color: #16a34a;
-        }
-
-        /* Action Buttons */
-        .btn-action {
-            background: #f1f5f9;
-            color: #64748b;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: 0.2s;
-            margin-right: 5px;
-        }
-
-        .btn-action:hover {
-            background: #e2e8f0;
-            color: #0f172a;
-        }
-
-        @media(max-width: 1024px) {
-            .stats-grid {
+        @media (max-width: 900px) {
+            .analysis-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
 
-        @media(max-width: 768px) {
+        .analysis-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(15, 23, 42, 0.04);
+            padding: 18px;
+        }
+
+        .analysis-card .a-head {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--muted);
+            margin-bottom: 12px;
+        }
+
+        .analysis-card .a-head i {
+            font-size: 15px;
+        }
+
+        .analysis-card .a-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--ink);
+            display: flex;
+            align-items: baseline;
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+
+        .analysis-card .a-value span {
+            font-size: 12.5px;
+            font-weight: 500;
+            color: var(--muted);
+        }
+
+        .analysis-card .a-status {
+            font-size: 11.5px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .analysis-card .a-status .status-dot {
+            width: 7px;
+            height: 7px;
+        }
+
+        .status-normal {
+            color: var(--green);
+        }
+
+        .status-normal .status-dot {
+            background: var(--green);
+        }
+
+        .status-waspada {
+            color: var(--amber);
+        }
+
+        .status-waspada .status-dot {
+            background: var(--amber);
+        }
+
+        .status-bahaya {
+            color: var(--red);
+        }
+
+        .status-bahaya .status-dot {
+            background: var(--red);
+        }
+
+        @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
             }
@@ -381,8 +537,12 @@
                 padding: 20px;
             }
 
-            .stats-grid {
+            .gauge-row {
                 grid-template-columns: 1fr;
+            }
+
+            .vitals-grid {
+                grid-template-columns: 1fr 1fr;
             }
         }
     </style>
@@ -390,360 +550,171 @@
 
 <body>
 
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <i class="bi bi-heart-pulse-fill"></i> FallSense
+    <!-- Topbar -->
+    <header class="topbar">
+        <div class="topbar-brand">
+            <div class="brand-icon"><i class="bi bi-heart-pulse-fill"></i></div>
+            <span>FallSense</span>
         </div>
-        <div class="nav-links">
-            <a href="{{ route('dashboard') }}" class="nav-item active"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
-            <a href="{{ route('admin.akun') }}" class="nav-item"><i class="bi bi-people-fill"></i> Manajemen Akun</a>
-            <a href="{{ route('admin.alat') }}" class="nav-item"><i class="bi bi-smartwatch"></i> Alat (ESP32)</a>
-            <a href="{{ route('admin.log') }}" class="nav-item"><i class="bi bi-shield-exclamation"></i> Log Sistem</a>
+        <div class="topbar-search">
+            <i class="bi bi-search"></i>
+            <input type="text" placeholder="Cari pasien...">
         </div>
-        <div class="sidebar-footer">
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="logout-btn">
-                    <i class="bi bi-box-arrow-right"></i> Keluar
-                </button>
-            </form>
+        <div class="topbar-right">
+            <div class="topbar-bell"><i class="bi bi-bell-fill"></i><span class="dot"></span></div>
+            <div class="topbar-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 2)) }}</div>
         </div>
-    </aside>
+    </header>
+
+    @include('layouts.sidebar')
 
     <main class="main-content">
+        <div class="dashboard-grid">
 
-        <!-- Header -->
-        <header class="page-header">
-            <div>
-                <h1>Pusat Kendali Admin</h1>
-                <p style="color: #64748b; font-size: 14px; margin-top: 5px;">Pantau seluruh aktivitas aplikasi dan
-                    perangkat keras secara global.</p>
-            </div>
-            <div class="user-profile">
-                <i class="bi bi-person-circle"></i>
-                <span style="font-weight: 600; font-size: 14px; color: #334155;">{{ Auth::user()->name }}</span>
-            </div>
-        </header>
+            <!-- KARTU PASIEN -->
+            <div class="card">
+                <div class="patient-head">
+                    <div class="patient-avatar">{{ strtoupper(substr($pasien->nama_lengkap ?? 'NA', 0, 2)) }}</div>
+                    <div>
+                        <h2>{{ $pasien->nama_lengkap ?? 'Nama Pasien' }}</h2>
+                        <p>
+                            <span class="status-dot"></span>
+                            {{ $pasien->usia ?? '-' }} Thn &bull; {{ $pasien->jenis_kelamin ?? '-' }} &bull;
+                            ID-{{ str_pad($pasien->id ?? 0, 3, '0', STR_PAD_LEFT) }}
+                        </p>
+                        <p style="margin-top:1px;">{{ $pasien->kamar ?? 'Kamar belum diatur' }}</p>
+                    </div>
+                </div>
 
-        <!-- Widget Statistik Utama -->
-        <div class="stats-grid">
-            <div class="stat-card" style="border-color: #3b82f6;">
-                <div class="stat-icon" style="background: #eff6ff; color: #3b82f6;"><i class="bi bi-people-fill"></i>
+                <div class="vitals-grid">
+                    <div class="vital-box vital-heart">
+                        <div class="vital-label">Detak Jantung</div>
+                        <div class="vital-value">{{ $sensorTerbaru->detak_jantung ?? '--' }} <span
+                                class="vital-unit">bpm</span></div>
+                    </div>
+                    <div class="vital-box vital-spo2">
+                        <div class="vital-label">SpO2</div>
+                        <div class="vital-value">{{ $sensorTerbaru->spo2 ?? '--' }} <span class="vital-unit">%</span>
+                        </div>
+                    </div>
+                    <div class="vital-box vital-svm">
+                        <div class="vital-label">SVM Terkini</div>
+                        <div class="vital-value">{{ $sensorTerbaru->svm ?? '--' }} <span class="vital-unit">g</span>
+                        </div>
+                    </div>
+                    <div class="vital-box vital-status">
+                        <div class="vital-label">Status</div>
+                        <div class="vital-value">{{ $sensorTerbaru->status ?? 'Normal' }}</div>
+                    </div>
                 </div>
-                <div class="stat-info">
-                    <h3>{{ $totalPengguna }}</h3>
-                    <p>Akun Terdaftar</p>
+
+                <div class="device-box">
+                    <span class="status-dot"
+                        style="background: {{ $perangkat->terhubung ?? true ? '#10b981' : '#ef4444' }};"></span>
+                    <div>
+                        <strong style="font-size: 13px; color: var(--ink);">ESP32 + MPU-9250</strong>
+                        <small>{{ $perangkat->terhubung ?? true ? 'Terhubung via Wi-Fi' : 'Terputus' }}</small>
+                        <small>{{ $perangkat->ip_address ?? '192.168.1.42' }}</small>
+                    </div>
+                    <div class="device-battery">
+                        <i class="bi bi-battery-full"></i> {{ $perangkat->baterai ?? 100 }}%
+                    </div>
                 </div>
             </div>
-            <div class="stat-card" style="border-color: #10b981;">
-                <div class="stat-icon" style="background: #dcfce7; color: #10b981;"><i
-                        class="bi bi-person-wheelchair"></i></div>
-                <div class="stat-info">
-                    <h3>{{ $totalPasien }}</h3>
-                    <p>Lansia Dipantau</p>
-                </div>
-            </div>
-            <div class="stat-card" style="border-color: #8b5cf6;">
-                <div class="stat-icon" style="background: #f3e8ff; color: #8b5cf6;"><i class="bi bi-cpu-fill"></i></div>
-                <div class="stat-info">
-                    <h3>{{ $totalPerangkat }}</h3>
-                    <p>Perangkat Node (IoT)</p>
+
+            <!-- ORIENTASI TUBUH -->
+            <div class="card">
+                <div class="card-title"><i class="bi bi-compass" style="color:#3b82f6;"></i> Orientasi Tubuh (Filter
+                    Komplementer)</div>
+                <div class="gauge-row">
+                    <div class="gauge-box">
+                        <div class="gauge-label">Roll (X)</div>
+                        <div class="gauge-ring">
+                            <svg viewBox="0 0 130 130" width="130" height="130">
+                                <circle class="bg" cx="65" cy="65" r="54" fill="none"
+                                    stroke-width="10"></circle>
+                                <circle id="gaugeRoll" class="fg" cx="65" cy="65" r="54"
+                                    fill="none" stroke="#3b82f6" stroke-width="10" stroke-dasharray="339.29"
+                                    stroke-dashoffset="339.29"></circle>
+                            </svg>
+                            <div class="gauge-value">{{ $sensorTerbaru->roll ?? 0 }}&deg;</div>
+                        </div>
+                        <div class="gauge-sub">Kemiringan kanan/kiri</div>
+                    </div>
+                    <div class="gauge-box">
+                        <div class="gauge-label">Pitch (Y)</div>
+                        <div class="gauge-ring">
+                            <svg viewBox="0 0 130 130" width="130" height="130">
+                                <circle class="bg" cx="65" cy="65" r="54" fill="none"
+                                    stroke-width="10"></circle>
+                                <circle id="gaugePitch" class="fg" cx="65" cy="65" r="54"
+                                    fill="none" stroke="#10b981" stroke-width="10" stroke-dasharray="339.29"
+                                    stroke-dashoffset="339.29"></circle>
+                            </svg>
+                            <div class="gauge-value">{{ $sensorTerbaru->pitch ?? 0 }}&deg;</div>
+                        </div>
+                        <div class="gauge-sub">Kemiringan depan/belakang</div>
+                    </div>
+                    <div class="gauge-box">
+                        <div class="gauge-label">Yaw (Z)</div>
+                        <div class="gauge-ring">
+                            <svg viewBox="0 0 130 130" width="130" height="130">
+                                <circle class="bg" cx="65" cy="65" r="54" fill="none"
+                                    stroke-width="10"></circle>
+                                <circle id="gaugeYaw" class="fg" cx="65" cy="65" r="54"
+                                    fill="none" stroke="#f59e0b" stroke-width="10" stroke-dasharray="339.29"
+                                    stroke-dashoffset="339.29"></circle>
+                            </svg>
+                            <div class="gauge-value">{{ $sensorTerbaru->yaw ?? 0 }}&deg;</div>
+                        </div>
+                        <div class="gauge-sub">Arah hadap tubuh</div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Tabel Daftar Pasien & Perangkat -->
-        <div class="section-card">
-            <div class="section-header">
-                <div class="section-title"><i class="bi bi-journal-medical text-primary"></i> Daftar Lansia & Perangkat
-                    Aktif</div>
-                <button class="btn-action" style="background: #1976d2; color: white;" onclick="openModal('modalAdd')"><i
-                        class="bi bi-plus-lg"></i>
-                    Tambah Data</button>
+        <!-- ANALISA KESEHATAN LAINNYA -->
+        <div class="analysis-grid">
+            <div class="analysis-card">
+                <div class="a-head"><i class="bi bi-activity" style="color:#8b5cf6;"></i> SVM</div>
+                <div class="a-value">{{ $sensorTerbaru->svm ?? '0.00' }} <span>g</span></div>
+                <div class="a-status status-normal"><span class="status-dot"></span> Parameter normal</div>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>NAMA LANSIA</th>
-                        <th>USIA/JK</th>
-                        <th>KELUARGA (PENGELOLA)</th>
-                        <th>MAC ADDRESS ALAT</th>
-                        <th>STATUS</th>
-                        <th>AKSI</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($daftarPasien as $pas)
-                        <tr>
-                            <td style="font-weight: 600;">{{ $pas->nama_lengkap }}</td>
-                            <td>{{ $pas->usia }} Thn / {{ $pas->jenis_kelamin }}</td>
-                            <td>
-                                <i class="bi bi-person text-secondary"></i> {{ $pas->user->name ?? '-' }}<br>
-                                <small style="color: #94a3b8;">{{ $pas->user->no_telepon ?? '-' }}</small>
-                            </td>
-                            <td style="font-family: monospace; color: #8b5cf6; font-weight: 600;">
-                                {{ $pas->perangkats->first()->mac_address ?? 'Belum Binding' }}
-                            </td>
-                            <td><span class="badge badge-aktif">Aktif</span></td>
-                            <td>
-                                <!-- Kirim data ke JS saat diklik -->
-                                <button class="btn-action" title="Edit Data"
-                                    onclick="openEditPasien('{{ $pas->id }}', '{{ $pas->nama_lengkap }}', '{{ $pas->usia }}', '{{ $pas->jenis_kelamin }}', '{{ $pas->perangkats->first()->mac_address ?? '' }}')">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-
-                                <button class="btn-action" title="Hapus Data" style="color: #ef4444;"
-                                    onclick="openDeletePasien('{{ $pas->id }}')">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" style="text-align: center; color: #64748b;">Belum ada data pasien/lansia
-                                terdaftar di sistem.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-
-
-        <!-- Tabel Log Kejadian (Global) -->
-        <div class="section-card">
-            <div class="section-header">
-                <div class="section-title"><i class="bi bi-exclamation-triangle-fill text-danger"></i> Log Indikasi
-                    Jatuh Terbaru (Global)</div>
+            <div class="analysis-card">
+                <div class="a-head"><i class="bi bi-heart-fill" style="color:#10b981;"></i> Detak Jantung</div>
+                <div class="a-value">{{ $sensorTerbaru->detak_jantung ?? '0' }} <span>bpm</span></div>
+                <div class="a-status status-normal"><span class="status-dot"></span> Rentang normal</div>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>WAKTU KEJADIAN</th>
-                        <th>PASIEN (KORBAN)</th>
-                        <th>JENIS KEJADIAN</th>
-                        <th>KEPARAHAN</th>
-                        <th>TINDAKAN</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($semuaKejadian as $kejadian)
-                        <tr>
-                            <td>{{ \Carbon\Carbon::parse($kejadian->created_at)->translatedFormat('d M Y, H:i') }}</td>
-                            <td style="font-weight: 600;">{{ $kejadian->pasien->nama_lengkap ?? 'Unknown' }}</td>
-                            <td>{{ $kejadian->jenis_kejadian }}</td>
-                            <td>
-                                <span
-                                    class="badge {{ strtolower($kejadian->tingkat_keparahan) == 'tinggi' ? 'badge-tinggi' : 'badge-sedang' }}">
-                                    {{ $kejadian->tingkat_keparahan }}
-                                </span>
-                            </td>
-                            <td>
-                                <button class="btn-action" title="Lihat Detail Log"
-                                    onclick="openDetailSensor('{{ $kejadian->jenis_kejadian }}', '{{ $kejadian->sensorData->svm ?? 'N/A' }}', '{{ $kejadian->sensorData->pitch ?? 'N/A' }}', '{{ $kejadian->sensorData->roll ?? 'N/A' }}')">
-                                    <i class="bi bi-search"></i> Detail Sensor
-                                </button>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" style="text-align: center; color: #64748b;">Sistem aman. Belum ada log
-                                kejadian dari seluruh Node.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+            <div class="analysis-card">
+                <div class="a-head"><i class="bi bi-droplet-fill" style="color:#3b82f6;"></i> SpO2</div>
+                <div class="a-value">{{ $sensorTerbaru->spo2 ?? '0' }} <span>%</span></div>
+                <div class="a-status status-normal"><span class="status-dot"></span> Oksigen baik</div>
+            </div>
+            <div class="analysis-card">
+                <div class="a-head"><i class="bi bi-clock-fill" style="color:#f59e0b;"></i> Uptime</div>
+                <div class="a-value">{{ $perangkat->uptime ?? '00:00' }}</div>
+                <div class="a-status status-normal"><span class="status-dot"></span> Alat aktif 100%</div>
+            </div>
         </div>
     </main>
 
-    <!-- Modal Tambah Data Lansia -->
-    <div id="modalAdd" class="modal-overlay">
-        <div class="modal-box">
-            <h3 style="margin-bottom: 20px;">Tambah Data Lansia & Alat</h3>
-
-            <!-- Nanti action-nya kita arahkan ke route backend -->
-            <form action="#" method="POST">
-                @csrf
-                <div class="form-group">
-                    <label>Nama Lansia</label>
-                    <input type="text" name="nama_lengkap" required placeholder="Masukkan nama...">
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="form-group">
-                        <label>Usia</label>
-                        <input type="number" name="usia" required placeholder="Contoh: 70">
-                    </div>
-                    <div class="form-group">
-                        <label>Jenis Kelamin</label>
-                        <select name="jenis_kelamin" required>
-                            <option value="L">Laki-laki</option>
-                            <option value="P">Perempuan</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>MAC Address Alat (ESP32)</label>
-                    <input type="text" name="mac_address" required placeholder="Contoh: 30:AE:A4:07:0D:64">
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn-secondary"
-                        style="padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;"
-                        onclick="closeModal('modalAdd')">Batal</button>
-                    <button type="submit"
-                        style="background: #1976d2; color: white; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;">Simpan
-                        Data</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Edit Data -->
-    <div id="modalEditPasien" class="modal-overlay">
-        <div class="modal-box">
-            <h3 style="margin-bottom: 20px;">Edit Data Lansia</h3>
-            <form id="formEditPasien" method="POST">
-                @csrf @method('PUT')
-                <div class="form-group">
-                    <label>Nama Lansia</label>
-                    <input type="text" name="nama_lengkap" id="edit_nama_pasien" required>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="form-group">
-                        <label>Usia</label>
-                        <input type="number" name="usia" id="edit_usia_pasien" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Jenis Kelamin</label>
-                        <select name="jenis_kelamin" id="edit_jk_pasien" required>
-                            <option value="L">Laki-laki</option>
-                            <option value="P">Perempuan</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>MAC Address Alat</label>
-                    <input type="text" name="mac_address" id="edit_mac_pasien" required>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn-secondary"
-                        style="padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;"
-                        onclick="closeModal('modalEditPasien')">Batal</button>
-                    <button type="submit"
-                        style="background: #f59e0b; color: white; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;">Update
-                        Data</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Hapus Data -->
-    <div id="modalDeletePasien" class="modal-overlay">
-        <div class="modal-box" style="text-align: center;">
-            <i class="bi bi-exclamation-triangle-fill" style="font-size: 50px; color: #ef4444;"></i>
-            <h3 style="margin-top: 15px;">Hapus Data Lansia?</h3>
-            <p style="color: #64748b; font-size: 14px; margin-top: 10px;">Semua data sensor dan riwayat jatuh lansia
-                ini akan ikut terhapus. Yakin?</p>
-            <form id="formDeletePasien" method="POST" style="margin-top: 25px;">
-                @csrf @method('DELETE')
-                <div class="modal-footer" style="justify-content: center;">
-                    <button type="button" class="btn-secondary"
-                        style="padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;"
-                        onclick="closeModal('modalDeletePasien')">Batal</button>
-                    <button type="submit"
-                        style="background: #ef4444; color: white; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;">Ya,
-                        Hapus Permanen</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Detail Sensor -->
-    <div id="modalSensor" class="modal-overlay">
-        <div class="modal-box">
-            <h3 style="margin-bottom: 20px;"><i class="bi bi-activity text-danger"></i> Detail Data Sensor Saat Jatuh
-            </h3>
-
-            <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                <p><strong>Jenis Kejadian:</strong> <span id="detail-jenis"></span></p>
-                <hr style="margin: 10px 0; border: 0; border-top: 1px solid #e2e8f0;">
-                <p><strong>Nilai SVM:</strong> <span id="detail-svm"
-                        style="color: #8b5cf6; font-weight: bold;"></span> g</p>
-                <p><strong>Pitch (Depan/Belakang):</strong> <span id="detail-pitch"></span>°</p>
-                <p><strong>Roll (Kanan/Kiri):</strong> <span id="detail-roll"></span>°</p>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn-secondary"
-                    style="padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;"
-                    onclick="closeModal('modalSensor')">Tutup</button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // Fungsi untuk membuka dan menutup Modal Pop-up Custom
-        function openModal(id) {
-            document.getElementById(id).classList.add('active');
+        // Isi lingkaran gauge orientasi tubuh berdasarkan nilai derajat.
+        // Roll & Pitch dinormalisasi dari -90..90, Yaw dari 0..360.
+        function setGauge(id, value, min, max) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const circumference = 339.29;
+            let pct = (value - min) / (max - min);
+            pct = Math.max(0, Math.min(1, pct));
+            el.style.strokeDashoffset = circumference - (circumference * pct);
         }
 
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
-        }
-
-        // Fungsi khusus membuka Modal Edit (Sambil mengisi data ke dalam Form)
-        function openEditModal(id, name, email, role) {
-            document.getElementById('edit_name').value = name;
-            document.getElementById('edit_email').value = email;
-            document.getElementById('edit_role').value = role;
-
-            // Set tujuan URL formulirnya ke ID spesifik pengguna ini
-            document.getElementById('formEdit').action = '/admin/akun/' + id;
-            openModal('modalEdit');
-        }
-
-        // Fungsi khusus membuka Modal Delete
-        function openDeleteModal(id) {
-            document.getElementById('formDelete').action = '/admin/akun/' + id;
-            openModal('modalDelete');
-        }
-
-        // Fungsi untuk membuka detail sensor
-        function openDetailSensor(jenis, svm, pitch, roll) {
-            // Mengisi teks ke dalam modal
-            document.getElementById('detail-jenis').innerText = jenis;
-            document.getElementById('detail-svm').innerText = svm;
-            document.getElementById('detail-pitch').innerText = pitch;
-            document.getElementById('detail-roll').innerText = roll;
-
-            // Buka modalnya
-            openModal('modalSensor');
-        }
-
-        // Fungsi untuk Modal Edit Pasien
-        function openEditPasien(id, nama, usia, jk, mac) {
-            document.getElementById('edit_nama_pasien').value = nama;
-            document.getElementById('edit_usia_pasien').value = usia;
-            document.getElementById('edit_jk_pasien').value = jk;
-            document.getElementById('edit_mac_pasien').value = mac;
-
-            // Nanti kita arahkan form action-nya ke URL update backend
-            // document.getElementById('formEditPasien').action = '/admin/pasien/' + id;
-
-            openModal('modalEditPasien');
-        }
-
-        // Fungsi untuk Modal Delete Pasien
-        function openDeletePasien(id) {
-            // Nanti kita arahkan form action-nya ke URL delete backend
-            // document.getElementById('formDeletePasien').action = '/admin/pasien/' + id;
-
-            openModal('modalDeletePasien');
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            setGauge('gaugeRoll', {{ $sensorTerbaru->roll ?? 0 }}, -90, 90);
+            setGauge('gaugePitch', {{ $sensorTerbaru->pitch ?? 0 }}, -90, 90);
+            setGauge('gaugeYaw', {{ $sensorTerbaru->yaw ?? 0 }}, 0, 360);
+        });
     </script>
 
 </body>
