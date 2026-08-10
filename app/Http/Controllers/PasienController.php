@@ -12,41 +12,35 @@ class PasienController extends Controller
     public function index()
     {
         $user = Auth::user();
+        if (!$user) return redirect()->route('login');
 
-        // 1. Mencegah error jika sesi user kosong
-        if (!$user) {
-            return redirect()->route('login');
-        }
-
-        // 2. Mengambil role dengan aman
         $role = $user->role ?? 'keluarga';
 
-        // Jika super admin, ambil semua pasien. Jika keluarga, ambil pasien miliknya saja.
+        // Logika Pengambilan Data Berdasarkan Role
         if ($role === 'super_admin') {
             $pasiens = Pasien::with('perangkats')->orderBy('created_at', 'desc')->get();
-            // Statistik
-            $totalPasien = Pasien::count();
-            $perangkatAktif = Perangkat::where('status_koneksi', 'Terhubung')->count();
-            $perangkatOffline = Perangkat::where('status_koneksi', 'Terputus')->count();
+            $perangkats = Perangkat::with('pasien')->orderBy('created_at', 'desc')->get();
         } else {
+            // Keluarga hanya melihat data milik mereka
             $pasiens = Pasien::with('perangkats')->where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
-            // Statistik khusus keluarga
-            $totalPasien = $pasiens->count();
-            
-            // Ambil ID perangkat yang terhubung dengan pasien milik user ini
             $pasienIds = $pasiens->pluck('id');
-            
-            // 3. Mencegah error database jika Lansia belum ada (Array Kosong)
-            if ($pasienIds->isEmpty()) {
-                $perangkatAktif = 0;
-                $perangkatOffline = 0;
-            } else {
-                $perangkatAktif = Perangkat::whereIn('pasien_id', $pasienIds)->where('status_koneksi', 'Terhubung')->count();
-                $perangkatOffline = Perangkat::whereIn('pasien_id', $pasienIds)->where('status_koneksi', 'Terputus')->count();
-            }
+            // Ambil perangkat yang dipasang ke pasien mereka, ATAU perangkat yang masih nganggur
+            $perangkats = Perangkat::with('pasien')->whereIn('pasien_id', $pasienIds)->orWhereNull('pasien_id')->orderBy('created_at', 'desc')->get();
         }
 
-        return view('manajemen_pasien', compact('pasiens', 'totalPasien', 'perangkatAktif', 'perangkatOffline'));
+        // Data khusus untuk dropdown pilihan di Modal
+        $perangkatsTersedia = Perangkat::whereNull('pasien_id')->get();
+        
+        // Data untuk 4 Kotak Widget Statistik di atas tabel
+        $totalPasien = $pasiens->count();
+        $perangkatAktif = $perangkats->where('status_koneksi', 'Terhubung')->count();
+        $perangkatOffline = $perangkats->where('status_koneksi', 'Terputus')->count();
+        $perangkatBelumTerpasang = $perangkatsTersedia->count();
+
+        return view('manajemen_pasien', compact(
+            'pasiens', 'perangkats', 'perangkatsTersedia', 
+            'totalPasien', 'perangkatAktif', 'perangkatOffline', 'perangkatBelumTerpasang'
+        ));
     }
 
     public function store(Request $request)
@@ -55,16 +49,23 @@ class PasienController extends Controller
             'nama_lengkap' => 'required|string|max:255',
             'usia' => 'required|numeric',
             'jenis_kelamin' => 'required|in:L,P',
-            // lokasi_kamar bisa disimpan di kolom 'status' sementara jika belum ada kolomnya di DB, atau Anda tambahkan nanti
+            'perangkat_id' => 'nullable|exists:perangkats,id'
         ]);
 
-        Pasien::create([
+        $pasien = Pasien::create([
             'user_id' => Auth::id(),
             'nama_lengkap' => $request->nama_lengkap,
             'usia' => $request->usia,
             'jenis_kelamin' => $request->jenis_kelamin,
-            'status' => 'Aktif', // Default
+            'status' => 'Aktif',
         ]);
+
+        // Jika keluarga memilih perangkat saat mendaftarkan pasien, otomatis hubungkan!
+        if ($request->filled('perangkat_id')) {
+            $perangkat = Perangkat::find($request->perangkat_id);
+            $perangkat->pasien_id = $pasien->id;
+            $perangkat->save();
+        }
 
         return back()->with('success', 'Data Pasien berhasil ditambahkan!');
     }
@@ -72,27 +73,65 @@ class PasienController extends Controller
     public function update(Request $request, $id)
     {
         $pasien = Pasien::findOrFail($id);
-        
         $request->validate([
             'nama_lengkap' => 'required|string|max:255',
             'usia' => 'required|numeric',
             'jenis_kelamin' => 'required|in:L,P',
         ]);
 
-        $pasien->update([
-            'nama_lengkap' => $request->nama_lengkap,
-            'usia' => $request->usia,
-            'jenis_kelamin' => $request->jenis_kelamin,
-        ]);
-
+        $pasien->update($request->all());
         return back()->with('success', 'Data Pasien berhasil diperbarui!');
     }
 
     public function destroy($id)
     {
-        $pasien = Pasien::findOrFail($id);
-        $pasien->delete();
+        Pasien::findOrFail($id)->delete();
+        return back()->with('success', 'Data Pasien berhasil dihapus!');
+    }
 
-        return back()->with('success', 'Data Pasien beserta riwayatnya berhasil dihapus!');
+    // ==========================================
+    // --- FITUR MANAJEMEN PERANGKAT (IoT) ---
+    // ==========================================
+
+    public function storePerangkat(Request $request)
+    {
+        $request->validate([
+            'nama_perangkat' => 'required|string|max:255',
+            'mac_address' => 'required|string|unique:perangkats,mac_address',
+            'pasien_id' => 'nullable|exists:pasiens,id'
+        ]);
+
+        Perangkat::create([
+            'nama_perangkat' => $request->nama_perangkat,
+            'mac_address' => $request->mac_address,
+            'pasien_id' => $request->pasien_id,
+            'status_koneksi' => 'Terputus'
+        ]);
+
+        return back()->with('success', 'Perangkat berhasil ditambahkan ke inventaris!');
+    }
+
+    public function updatePerangkat(Request $request, $id)
+    {
+        $perangkat = Perangkat::findOrFail($id);
+        $request->validate([
+            'nama_perangkat' => 'required|string|max:255',
+            'mac_address' => 'required|string|unique:perangkats,mac_address,'.$id,
+            'pasien_id' => 'nullable|exists:pasiens,id'
+        ]);
+
+        $perangkat->update([
+            'nama_perangkat' => $request->nama_perangkat,
+            'mac_address' => $request->mac_address,
+            'pasien_id' => $request->pasien_id,
+        ]);
+
+        return back()->with('success', 'Detail perangkat berhasil diperbarui!');
+    }
+
+    public function destroyPerangkat($id)
+    {
+        Perangkat::findOrFail($id)->delete();
+        return back()->with('success', 'Perangkat berhasil dihapus dari sistem!');
     }
 }

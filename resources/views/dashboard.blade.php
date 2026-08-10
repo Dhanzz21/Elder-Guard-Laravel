@@ -6,12 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - FallSense</title>
 
-    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         * {
@@ -21,808 +17,734 @@
             font-family: 'Poppins', sans-serif;
         }
 
+        :root {
+            --navy: #101c3f;
+            --blue: #3b82f6;
+            --bg: #f4f7fe;
+            --ink: #0f172a;
+            --muted: #64748b;
+            --line: #e7ebf5;
+            --green: #10b981;
+            --purple: #8b5cf6;
+            --amber: #f59e0b;
+            --red: #ef4444;
+        }
+
+        .text-danger {
+            color: var(--red) !important;
+        }
+
         body {
-            background-color: #f3f4f6;
+            background-color: var(--bg);
             color: #333;
-            display: flex;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* --- SIDEBAR ICON ONLY --- */
+        /* --- TOPBAR --- */
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 72px;
+            background: var(--navy);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px 0 20px;
+            z-index: 110;
+        }
+
+        .topbar-search {
+            flex: 1;
+            max-width: 420px;
+            margin: 0 40px;
+            position: relative;
+        }
+
+        .topbar-search input {
+            width: 100%;
+            background: #1c2a56;
+            border: 1px solid #2b3a68;
+            color: #e6ebfb;
+            border-radius: 30px;
+            padding: 10px 16px 10px 40px;
+            font-size: 13.5px;
+            outline: none;
+        }
+
+        .topbar-search input::placeholder {
+            color: #8592b8;
+        }
+
+        .topbar-search i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8592b8;
+        }
+
+        .topbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+        }
+
+        .topbar-brand .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .topbar-brand span {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .topbar-bell {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #1c2a56;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #cfd8f5;
+            font-size: 17px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .topbar-bell .dot {
+            position: absolute;
+            top: 8px;
+            right: 9px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--red);
+            border: 1.5px solid var(--navy);
+        }
+
+        .topbar-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--blue);
+            color: #fff;
+            font-weight: 600;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* --- SIDEBAR (uses layouts.sidebar partial classes) --- */
         .sidebar {
             width: 80px;
-            background: #f8fafc;
-            border-right: 1px solid #e2e8f0;
+            background: var(--navy);
             display: flex;
             flex-direction: column;
             align-items: center;
             position: fixed;
-            height: 100vh;
+            height: calc(100vh - 72px);
+            top: 72px;
+            left: 0;
             z-index: 100;
-            padding-top: 20px;
+            padding-top: 22px;
+            border-right: 1px solid #1e2c58;
         }
 
         .sidebar-logo {
             width: 40px;
             height: 40px;
-            background: #3b82f6;
-            color: white;
+            background: var(--blue);
+            color: #fff;
             border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 20px;
-            margin-bottom: 40px;
+            display: none;
+            /* logo already shown in topbar; hidden here to avoid duplication */
         }
 
         .nav-item {
-            width: 50px;
-            height: 50px;
+            width: 48px;
+            height: 48px;
             display: flex;
             justify-content: center;
             align-items: center;
             border-radius: 12px;
-            color: #64748b;
-            font-size: 22px;
-            margin-bottom: 15px;
+            color: #8b98c2;
+            font-size: 21px;
+            margin-bottom: 12px;
             text-decoration: none;
-            transition: 0.3s;
+            transition: 0.2s;
         }
 
         .nav-item:hover,
         .nav-item.active {
-            background: #e2e8f0;
-            color: #0f172a;
+            background: var(--blue);
+            color: #fff;
         }
 
         .sidebar-bottom {
             margin-top: auto;
-            padding-bottom: 20px;
+            padding-bottom: 22px;
         }
 
-        /* --- MAIN CONTENT & NAVBAR --- */
-        .main-wrapper {
-            flex-grow: 1;
+        /* --- MAIN --- */
+        .main-content {
             margin-left: 80px;
-            display: flex;
-            flex-direction: column;
+            margin-top: 72px;
+            padding: 26px 30px 40px;
         }
 
-        .top-navbar {
-            background: #1e293b;
-            color: white;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .nav-left h1 {
-            font-size: 20px;
-            font-weight: 600;
-            margin: 0;
-        }
-
-        .nav-left p {
-            font-size: 11px;
-            color: #94a3b8;
-            margin: 0;
-        }
-
-        .nav-center {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-        }
-
-        .search-bar {
-            background: #334155;
-            border-radius: 20px;
-            padding: 8px 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            width: 400px;
-        }
-
-        .search-bar input {
-            background: transparent;
-            border: none;
-            color: white;
-            outline: none;
-            width: 100%;
-        }
-
-        .search-bar input::placeholder {
-            color: #94a3b8;
-        }
-
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .nav-icon {
-            font-size: 20px;
-            color: #cbd5e1;
-            cursor: pointer;
-        }
-
-        .admin-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #334155;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: 500;
-            font-size: 14px;
-        }
-
-        .admin-profile .avatar-circle {
-            width: 25px;
-            height: 25px;
-            background: #cbd5e1;
-            color: #0f172a;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            font-size: 12px;
-        }
-
-        /* --- DASHBOARD CONTENT --- */
-        .content {
-            padding: 30px;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        /* Alert Banner */
-        .alert-banner {
-            background: #fef2f2;
-            border: 1px solid #ef4444;
-            border-radius: 12px;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 6px rgba(239, 68, 68, 0.1);
-        }
-
-        .alert-text {
-            color: #b91c1c;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-        }
-
-        .alert-action {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .btn-confirm {
-            background: #dc2626;
-            color: white;
-            border: none;
-            padding: 6px 15px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        /* Grid Layout */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 25px;
+            grid-template-columns: 380px 1fr;
+            gap: 22px;
+            align-items: start;
         }
 
-        /* Cards General */
+        @media (max-width: 1100px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .card {
-            background: white;
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-            border: 1px solid #e2e8f0;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px rgba(15, 23, 42, 0.04);
+            padding: 22px;
         }
 
-        .card-header-title {
-            text-align: center;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 20px;
-            font-size: 15px;
-        }
-
-        /* --- LEFT COLUMN (Patient Info) --- */
-        .patient-header {
+        /* --- PATIENT CARD --- */
+        .patient-head {
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 25px;
+            gap: 14px;
+            margin-bottom: 18px;
         }
 
         .patient-avatar {
-            width: 60px;
-            height: 60px;
-            background: #e2e8f0;
-            border-radius: 12px;
+            width: 54px;
+            height: 54px;
+            border-radius: 14px;
+            background: #eef2ff;
+            color: var(--blue);
             display: flex;
+            align-items: center;
             justify-content: center;
-            align-items: center;
-            font-size: 24px;
             font-weight: 700;
-            color: #475569;
-        }
-
-        .patient-info h2 {
             font-size: 18px;
-            margin: 0;
-            color: #0f172a;
+            flex-shrink: 0;
         }
 
-        .patient-info p {
-            font-size: 12px;
-            color: #64748b;
-            margin: 2px 0;
+        .patient-head h2 {
+            font-size: 18px;
+            color: var(--ink);
+            font-weight: 700;
         }
 
-        .patient-room {
-            font-size: 12px;
-            color: #10b981;
-            font-weight: 500;
+        .patient-head p {
+            font-size: 12.5px;
+            color: var(--muted);
+            margin-top: 2px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
 
-        /* Vital Blocks 2x2 */
-        .vital-blocks {
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            display: inline-block;
+        }
+
+        .vitals-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 25px;
+            gap: 12px;
+            margin-bottom: 18px;
         }
 
-        .v-block {
-            padding: 15px;
-            border-radius: 12px;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 90px;
+        .vital-box {
+            border-radius: 14px;
+            padding: 14px 16px;
         }
 
-        .v-block-title {
+        .vital-box .vital-label {
             font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .v-block-val {
-            font-size: 24px;
             font-weight: 700;
-            display: flex;
-            align-items: baseline;
-            gap: 5px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            opacity: 0.85;
         }
 
-        .v-block-unit {
-            font-size: 12px;
-            font-weight: normal;
+        .vital-box .vital-value {
+            font-size: 20px;
+            font-weight: 700;
         }
 
-        .bg-green {
+        .vital-box .vital-unit {
+            font-size: 11.5px;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .vital-heart {
             background: #10b981;
+            color: #fff;
         }
 
-        .bg-blue {
-            background: #3b82f6;
+        .vital-spo2 {
+            background: #dbeafe;
+            color: #1d4ed8;
         }
 
-        .bg-orange {
-            background: #f59e0b;
+        .vital-svm {
+            background: #fef3c7;
+            color: #92400e;
         }
 
-        .bg-light {
-            background: #f8fafc;
-            color: #334155;
-            border: 1px solid #e2e8f0;
-        }
-
-        /* Device Info Footer */
-        .device-info {
+        .vital-status {
             background: #f1f5f9;
-            padding: 15px;
+            color: var(--ink);
+        }
+
+        .vital-status .vital-value {
+            font-size: 15px;
+        }
+
+        .device-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f8fafc;
+            border: 1px solid var(--line);
             border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 12px 14px;
         }
 
-        .device-text h4 {
-            font-size: 13px;
-            color: #0f172a;
-            margin: 0 0 3px 0;
+        .device-box .status-dot {
+            flex-shrink: 0;
         }
 
-        .device-text p {
-            font-size: 11px;
-            color: #64748b;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+        .device-box small {
+            display: block;
+            color: var(--muted);
+            font-size: 11.5px;
+            line-height: 1.5;
         }
 
-        .battery {
-            display: flex;
-            align-items: center;
-            gap: 5px;
+        .device-battery {
+            margin-left: auto;
+            font-size: 12.5px;
             font-weight: 600;
-            font-size: 13px;
-            color: #10b981;
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
         }
 
-        /* --- RIGHT COLUMN (Orientation & Summaries) --- */
-        .orientation-grid {
+        /* --- ORIENTASI TUBUH (circular gauges) --- */
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .gauge-row {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            gap: 18px;
         }
 
-        .orient-box {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
+        .gauge-box {
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .orient-title {
+        .gauge-box .gauge-label {
             font-size: 12px;
-            color: #64748b;
             font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
             margin-bottom: 10px;
         }
 
-        .orient-val {
-            font-size: 28px;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 15px;
+        .gauge-ring {
+            position: relative;
+            width: 130px;
+            height: 130px;
         }
 
-        .progress-bar-bg {
-            height: 6px;
-            background: #e2e8f0;
-            border-radius: 3px;
-            overflow: hidden;
+        .gauge-ring svg {
+            transform: rotate(-90deg);
         }
 
-        .progress-bar-fill {
+        .gauge-ring circle.bg {
+            stroke: #eef1f8;
+        }
+
+        .gauge-ring circle.fg {
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.6s ease;
+        }
+
+        .gauge-value {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
-            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--ink);
         }
 
-        .summary-grid {
+        .gauge-sub {
+            margin-top: 10px;
+            font-size: 11.5px;
+            color: var(--muted);
+        }
+
+        /* --- BOTTOM ANALYSIS CARDS --- */
+        .analysis-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-top: 25px;
+            gap: 18px;
+            margin-top: 22px;
         }
 
-        .sum-box {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+        @media (max-width: 900px) {
+            .analysis-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
-        .sum-title {
-            font-size: 12px;
-            color: #64748b;
+        .analysis-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(15, 23, 42, 0.04);
+            padding: 18px;
+        }
+
+        .analysis-card .a-head {
             display: flex;
             align-items: center;
+            gap: 8px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--muted);
+            margin-bottom: 12px;
+        }
+
+        .analysis-card .a-head i {
+            font-size: 15px;
+        }
+
+        .analysis-card .a-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--ink);
+            display: flex;
+            align-items: baseline;
             gap: 5px;
             margin-bottom: 8px;
         }
 
-        .sum-val {
-            font-size: 22px;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 5px;
+        .analysis-card .a-value span {
+            font-size: 12.5px;
+            font-weight: 500;
+            color: var(--muted);
         }
 
-        .sum-status {
-            font-size: 10px;
+        .analysis-card .a-status {
+            font-size: 11.5px;
             font-weight: 600;
-            color: #10b981;
             display: flex;
             align-items: center;
-            gap: 3px;
+            gap: 6px;
         }
 
-        /* Realtime Chart Section */
-        .chart-section {
-            margin-top: 25px;
+        .analysis-card .a-status .status-dot {
+            width: 7px;
+            height: 7px;
+        }
+
+        .status-normal {
+            color: var(--green);
+        }
+
+        .status-normal .status-dot {
+            background: var(--green);
+        }
+
+        .status-waspada {
+            color: var(--amber);
+        }
+
+        .status-waspada .status-dot {
+            background: var(--amber);
+        }
+
+        .status-bahaya {
+            color: var(--red);
+        }
+
+        .status-bahaya .status-dot {
+            background: var(--red);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .gauge-row {
+                grid-template-columns: 1fr;
+            }
+
+            .vitals-grid {
+                grid-template-columns: 1fr 1fr;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <!-- SIDEBAR (Icon Only) -->
+    <!-- Topbar -->
+    <header class="topbar">
+        <div class="topbar-brand">
+            <div class="brand-icon"><i class="bi bi-heart-pulse-fill"></i></div>
+            <span>FallSense</span>
+        </div>
+        <div class="topbar-search">
+            <i class="bi bi-search"></i>
+            <input type="text" placeholder="Cari pasien...">
+        </div>
+        <div class="topbar-right">
+            <div class="topbar-bell"><i class="bi bi-bell-fill"></i><span class="dot"></span></div>
+            <div class="topbar-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 2)) }}</div>
+        </div>
+    </header>
+
     @include('layouts.sidebar')
 
-    <div class="main-wrapper">
-        <!-- TOP NAVBAR -->
-        <nav class="top-navbar">
-            <div class="nav-left">
-                <i class="bi bi-heart-pulse-fill" style="color: #3b82f6; font-size: 24px;"></i>
-                <div>
-                    <h1>FallSense</h1>
-                    <p>Sistem Deteksi Jatuh Lansia</p>
-                </div>
-            </div>
+    @php
+        // sensor_data tidak punya kolom status, jadi statusnya dihitung tampilan saja dari nilai SVM.
+        // Ambang batas ini contoh awal — silakan sesuaikan dengan logika deteksi jatuh di controller.
+        $svmNow = $sensorTerbaru->svm ?? 0;
+        if ($svmNow >= 2.5) {
+            $statusLabel = 'Bahaya';
+            $statusClass = 'status-bahaya';
+        } elseif ($svmNow >= 1.5) {
+            $statusLabel = 'Waspada';
+            $statusClass = 'status-waspada';
+        } else {
+            $statusLabel = 'Normal';
+            $statusClass = 'status-normal';
+        }
+    @endphp
 
-            <div class="nav-center">
-                <div class="search-bar">
-                    <i class="bi bi-search" style="color: #94a3b8;"></i>
-                    <input type="text" placeholder="Cari pasien .........">
-                </div>
-            </div>
+    <main class="main-content">
+        <div class="dashboard-grid">
 
-            <div class="nav-right">
-                <i class="bi bi-bell nav-icon"></i>
-                <div class="admin-profile">
-                    <div class="avatar-circle">AM</div>
-                    <span>{{ Auth::user()->name ?? 'Admin' }}</span>
-                </div>
-                <!-- Form Logout Tersembunyi (Bisa ditaruh di dropdown profil nanti) -->
-            </div>
-        </nav>
-
-        <!-- MAIN DASHBOARD CONTENT -->
-        <main class="content">
-
-            @if ($pasien)
-                <!-- ALERT BANNER -->
-                <div class="alert-banner" id="alertBanner" style="display: none;">
-                    <div class="alert-text">
-                        <i class="bi bi-exclamation-circle-fill"></i>
-                        <span>Kejadian Jatuh Terdeteksi — {{ $pasien->nama_lengkap }} (ID-00{{ $pasien->id }}) • Kamar
-                            Utama • SVM mencapai <b id="alert-svm">2.41</b>g</span>
-                    </div>
-                    <div class="alert-action">
-                        <span style="font-size: 13px; color: #475569; font-weight: 500;" id="alert-time">--:--:--</span>
-                        <button class="btn-confirm"
-                            onclick="document.getElementById('alertBanner').style.display='none'">Konfirmasi</button>
-                    </div>
-                </div>
-
-                <div class="dashboard-grid">
-
-                    <!-- KOLOM KIRI: KARTU SPESIFIKASI PASIEN -->
-                    <div class="card"
-                        style="background: #e2e8f0; border: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">
-                        <div class="patient-header">
-                            <div class="patient-avatar">{{ strtoupper(substr($pasien->nama_lengkap, 0, 2)) }}</div>
-                            <div class="patient-info">
-                                <h2>{{ $pasien->nama_lengkap }}</h2>
-                                <p>{{ $pasien->usia }}th •
-                                    {{ $pasien->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }} •
-                                    ID-00{{ $pasien->id }}</p>
-                                <div class="patient-room"><i class="bi bi-geo-alt-fill"></i> Kamar Utama</div>
-                            </div>
-                        </div>
-
-                        <!-- Vital Blocks -->
-                        <div class="vital-blocks">
-                            <div class="v-block bg-green">
-                                <span class="v-block-title">Detak Jantung</span>
-                                <div class="v-block-val"><span id="val-bpm">--</span> <span
-                                        class="v-block-unit">Bpm</span></div>
-                            </div>
-                            <div class="v-block bg-blue">
-                                <span class="v-block-title">SpO2</span>
-                                <div class="v-block-val"><span id="val-spo2">--</span> <span
-                                        class="v-block-unit">%</span></div>
-                            </div>
-                            <div class="v-block bg-orange">
-                                <span class="v-block-title">SVM Terkini</span>
-                                <div class="v-block-val"><span id="val-svm-box">--</span> <span
-                                        class="v-block-unit">g</span></div>
-                            </div>
-                            <div class="v-block bg-light">
-                                <span class="v-block-title" style="color: #64748b;">Status</span>
-                                <div class="v-block-val" style="font-size: 18px;" id="val-status">Normal</div>
-                            </div>
-                        </div>
-
-                        <!-- Device Info -->
-                        <div class="device-info">
-                            <div class="device-text">
-                                <h4>ESP 32 + MPU-9250</h4>
-                                <p><i class="bi bi-wifi" style="color: #10b981;"></i> Terhubung via Wi-Fi</p>
-                                <p style="margin-left: 18px; font-size: 10px;">IP: 192.168.1.42</p>
-                            </div>
-                            <div class="battery">
-                                <i class="bi bi-battery-full" style="font-size: 20px;"></i> 100%
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- KOLOM KANAN: ORIENTASI & SUMMARY -->
+            <!-- KARTU PASIEN -->
+            <div class="card">
+                <div class="patient-head">
+                    <div class="patient-avatar">{{ strtoupper(substr($pasien->nama_lengkap ?? 'NA', 0, 2)) }}</div>
                     <div>
-                        <div class="card"
-                            style="background: #e2e8f0; border: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">
-                            <h3 class="card-header-title">Orientasi Tubuh (Filter Komplementer)</h3>
-
-                            <div class="orientation-grid">
-                                <div class="orient-box">
-                                    <div class="orient-title">ROLL (X)</div>
-                                    <div class="orient-val" id="val-roll">--</div>
-                                    <div class="progress-bar-bg">
-                                        <div class="progress-bar-fill bg-blue" id="bar-roll" style="width: 50%;">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="orient-box">
-                                    <div class="orient-title">PITCH (Y)</div>
-                                    <div class="orient-val" id="val-pitch">--</div>
-                                    <div class="progress-bar-bg">
-                                        <div class="progress-bar-fill bg-green" id="bar-pitch" style="width: 50%;">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="orient-box">
-                                    <div class="orient-title">YAW (Z)</div>
-                                    <div class="orient-val" id="val-yaw">+88</div>
-                                    <div class="progress-bar-bg">
-                                        <div class="progress-bar-fill bg-orange" style="width: 88%;"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="summary-grid">
-                                <div class="sum-box">
-                                    <div class="sum-title"><i class="bi bi-activity text-danger"></i> SVM</div>
-                                    <div class="sum-val" id="sum-svm">--</div>
-                                    <div class="sum-status"><i class="bi bi-caret-up-fill"></i> Normal Range</div>
-                                </div>
-                                <div class="sum-box">
-                                    <div class="sum-title"><i class="bi bi-heart-pulse text-success"></i> Detak
-                                        Jantung</div>
-                                    <div class="sum-val" id="sum-bpm">--</div>
-                                    <div class="sum-status"><i class="bi bi-caret-up-fill"></i> Normal Range</div>
-                                </div>
-                                <div class="sum-box">
-                                    <div class="sum-title"><i class="bi bi-lungs text-info"></i> SpO2</div>
-                                    <div class="sum-val" id="sum-spo2">--</div>
-                                    <div class="sum-status"><i class="bi bi-caret-up-fill"></i> Oksigen Baik</div>
-                                </div>
-                                <div class="sum-box">
-                                    <div class="sum-title"><i class="bi bi-clock text-warning"></i> UPTIME</div>
-                                    <div class="sum-val">08:24</div>
-                                    <div class="sum-status" style="color: #64748b;">Jam:Menit</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- AREA CHART (Placeholder untuk Grafik SVM Real-Time) -->
-                        <div class="card chart-section">
-                            <div
-                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h3 style="font-size: 15px; color: #1e293b;">Grafik SVM Real-Time</h3>
-                                <select
-                                    style="padding: 5px 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 12px; outline: none;">
-                                    <option>1 Menit Terakhir</option>
-                                    <option>5 Menit Terakhir</option>
-                                    <option>1 Jam Terakhir</option>
-                                </select>
-                            </div>
-                            <div style="height: 200px; width: 100%;">
-                                <canvas id="svmChart"></canvas>
-                            </div>
-                        </div>
+                        <h2>{{ $pasien->nama_lengkap ?? 'Nama Pasien' }}</h2>
+                        <p>
+                            <span class="status-dot"
+                                style="background: {{ ($pasien->status ?? 'Aktif') == 'Aktif' ? '#10b981' : '#94a3b8' }};"></span>
+                            {{ $pasien->usia ?? '-' }} Thn &bull; {{ $pasien->jenis_kelamin ?? '-' }} &bull;
+                            ID-{{ str_pad($pasien->id ?? 0, 3, '0', STR_PAD_LEFT) }}
+                        </p>
+                        <p style="margin-top:1px;">
+                            @if ($pasien->berat_badan ?? null)
+                                BB {{ $pasien->berat_badan }} kg
+                            @endif
+                            @if ($pasien->tinggi_badan ?? null)
+                                &bull; TB {{ $pasien->tinggi_badan }} cm
+                            @endif
+                        </p>
                     </div>
                 </div>
-            @else
-                <!-- Tampilan Jika Belum Ada Data Pasien -->
-                <div style="text-align: center; padding-top: 100px;">
-                    <i class="bi bi-person-x" style="font-size: 60px; color: #cbd5e1;"></i>
-                    <h2 style="margin-top: 20px;">Belum ada data Lansia yang dipantau.</h2>
-                    <p style="color: #64748b;">Silakan daftarkan pasien di menu Manajemen Pasien.</p>
-                </div>
-            @endif
 
-        </main>
-    </div>
+                <div class="vitals-grid">
+                    <div class="vital-box vital-heart">
+                        <div class="vital-label">Detak Jantung</div>
+                        <div class="vital-value">{{ $sensorTerbaru->detak_jantung ?? '--' }} <span
+                                class="vital-unit">bpm</span></div>
+                    </div>
+                    <div class="vital-box vital-spo2">
+                        <div class="vital-label">SpO2</div>
+                        <div class="vital-value">{{ $sensorTerbaru->spo2 ?? '--' }} <span class="vital-unit">%</span>
+                        </div>
+                    </div>
+                    <div class="vital-box vital-svm">
+                        <div class="vital-label">SVM Terkini</div>
+                        <div class="vital-value">{{ $sensorTerbaru->svm ?? '--' }} <span class="vital-unit">g</span>
+                        </div>
+                    </div>
+                    <div class="vital-box vital-status">
+                        <div class="vital-label">Status</div>
+                        <div class="vital-value">{{ $statusLabel }}</div>
+                    </div>
+                </div>
+
+                <div class="device-box">
+                    <span class="status-dot"
+                        style="background: {{ ($perangkat->status_koneksi ?? 'Terputus') == 'Terhubung' ? '#10b981' : '#ef4444' }};"></span>
+                    <div>
+                        <strong
+                            style="font-size: 13px; color: var(--ink);">{{ $perangkat->nama_perangkat ?? 'ElderGuard Wearable' }}</strong>
+                        <small>{{ ($perangkat->status_koneksi ?? 'Terputus') == 'Terhubung' ? 'Terhubung' : 'Terputus' }}
+                            &bull; {{ $perangkat->mac_address ?? '-' }}</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ORIENTASI TUBUH -->
+            <div class="card">
+                <div class="card-title"><i class="bi bi-compass" style="color:#3b82f6;"></i> Orientasi Tubuh (Filter
+                    Komplementer)</div>
+                <div class="gauge-row">
+                    <div class="gauge-box">
+                        <div class="gauge-label">Roll (X)</div>
+                        <div class="gauge-ring">
+                            <svg viewBox="0 0 130 130" width="130" height="130">
+                                <circle class="bg" cx="65" cy="65" r="54" fill="none"
+                                    stroke-width="10"></circle>
+                                <circle id="gaugeRoll" class="fg" cx="65" cy="65" r="54"
+                                    fill="none" stroke="#3b82f6" stroke-width="10" stroke-dasharray="339.29"
+                                    stroke-dashoffset="339.29"></circle>
+                            </svg>
+                            <div class="gauge-value">{{ $sensorTerbaru->roll ?? 0 }}&deg;</div>
+                        </div>
+                        <div class="gauge-sub">Kemiringan kanan/kiri</div>
+                    </div>
+                    <div class="gauge-box">
+                        <div class="gauge-label">Pitch (Y)</div>
+                        <div class="gauge-ring">
+                            <svg viewBox="0 0 130 130" width="130" height="130">
+                                <circle class="bg" cx="65" cy="65" r="54" fill="none"
+                                    stroke-width="10"></circle>
+                                <circle id="gaugePitch" class="fg" cx="65" cy="65" r="54"
+                                    fill="none" stroke="#10b981" stroke-width="10" stroke-dasharray="339.29"
+                                    stroke-dashoffset="339.29"></circle>
+                            </svg>
+                            <div class="gauge-value">{{ $sensorTerbaru->pitch ?? 0 }}&deg;</div>
+                        </div>
+                        <div class="gauge-sub">Kemiringan depan/belakang</div>
+                    </div>
+                    <div class="gauge-box">
+                        <div class="gauge-label">SVM</div>
+                        <div class="gauge-ring">
+                            <svg viewBox="0 0 130 130" width="130" height="130">
+                                <circle class="bg" cx="65" cy="65" r="54" fill="none"
+                                    stroke-width="10"></circle>
+                                <circle id="gaugeSvm" class="fg" cx="65" cy="65" r="54"
+                                    fill="none" stroke="#f59e0b" stroke-width="10" stroke-dasharray="339.29"
+                                    stroke-dashoffset="339.29"></circle>
+                            </svg>
+                            <div class="gauge-value">{{ $sensorTerbaru->svm ?? 0 }}g</div>
+                        </div>
+                        <div class="gauge-sub">Magnitudo percepatan</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ANALISA KESEHATAN LAINNYA -->
+        <div class="analysis-grid">
+            <div class="analysis-card">
+                <div class="a-head"><i class="bi bi-activity" style="color:#8b5cf6;"></i> SVM</div>
+                <div class="a-value">{{ $sensorTerbaru->svm ?? '0.00' }} <span>g</span></div>
+                <div class="a-status status-normal"><span class="status-dot"></span> Parameter normal</div>
+            </div>
+            <div class="analysis-card">
+                <div class="a-head"><i class="bi bi-heart-fill" style="color:#10b981;"></i> Detak Jantung</div>
+                <div class="a-value">{{ $sensorTerbaru->detak_jantung ?? '0' }} <span>bpm</span></div>
+                <div class="a-status status-normal"><span class="status-dot"></span> Rentang normal</div>
+            </div>
+            <div class="analysis-card">
+                <div class="a-head"><i class="bi bi-droplet-fill" style="color:#3b82f6;"></i> SpO2</div>
+                <div class="a-value">{{ $sensorTerbaru->spo2 ?? '0' }} <span>%</span></div>
+                <div class="a-status status-normal"><span class="status-dot"></span> Oksigen baik</div>
+            </div>
+            <div class="analysis-card">
+                <div class="a-head"><i class="bi bi-clock-fill" style="color:#f59e0b;"></i> Update Terakhir</div>
+                <div class="a-value" style="font-size: 17px;">
+                    {{ isset($sensorTerbaru->created_at) ? \Carbon\Carbon::parse($sensorTerbaru->created_at)->diffForHumans() : '-' }}
+                </div>
+                <div
+                    class="a-status {{ ($perangkat->status_koneksi ?? 'Terputus') == 'Terhubung' ? 'status-normal' : 'status-bahaya' }}">
+                    <span class="status-dot"></span>
+                    {{ ($perangkat->status_koneksi ?? 'Terputus') == 'Terhubung' ? 'Alat terhubung' : 'Alat terputus' }}
+                </div>
+            </div>
+        </div>
+    </main>
 
     <script>
-        // --- KONFIGURASI GRAFIK CHART.JS ---
-        const ctx = document.getElementById('svmChart');
-        let svmChart;
-
-        if (ctx) {
-            svmChart = new Chart(ctx.getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Nilai SVM (g)',
-                        data: [],
-                        borderColor: '#f59e0b', // Sesuai tema orange/kuning SVM
-                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            min: 0,
-                            max: 4,
-                            suggestedMax: 4
-                        },
-                        x: {
-                            display: true
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        // Menggambar garis batas threshold Impact (1.4g) & Freefall (0.8g)
-                        annotation: {
-                            annotations: {
-                                line1: {
-                                    type: 'line',
-                                    yMin: 1.4,
-                                    yMax: 1.4,
-                                    borderColor: 'red',
-                                    borderWidth: 1,
-                                    borderDash: [5, 5],
-                                    label: {
-                                        content: 'Impact (1.4g)',
-                                        display: true,
-                                        position: 'end'
-                                    }
-                                },
-                                line2: {
-                                    type: 'line',
-                                    yMin: 0.8,
-                                    yMax: 0.8,
-                                    borderColor: 'blue',
-                                    borderWidth: 1,
-                                    borderDash: [5, 5],
-                                    label: {
-                                        content: 'Freefall (0.8g)',
-                                        display: true,
-                                        position: 'end'
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    animation: {
-                        duration: 0
-                    }
-                }
-            });
+        // Isi lingkaran gauge berdasarkan nilai sensor.
+        // Roll & Pitch dinormalisasi dari -90..90 derajat, SVM dari 0..3g.
+        function setGauge(id, value, min, max) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const circumference = 339.29;
+            let pct = (value - min) / (max - min);
+            pct = Math.max(0, Math.min(1, pct));
+            el.style.strokeDashoffset = circumference - (circumference * pct);
         }
 
-        // --- FETCH DATA SENSOR API ---
-        const perangkatId = "{{ $pasien->perangkats->first()->id ?? '' }}";
-
-        async function fetchSensorData() {
-            if (!perangkatId) return;
-
-            try {
-                const response = await fetch(`/api/sensor/latest/${perangkatId}`);
-                const data = await response.json();
-
-                if (data && !data.error) {
-                    // Update Text Vital
-                    document.getElementById('val-bpm').innerText = data.detak_jantung || '--';
-                    document.getElementById('sum-bpm').innerText = data.detak_jantung || '--';
-
-                    document.getElementById('val-spo2').innerText = data.spo2 || '--';
-                    document.getElementById('sum-spo2').innerText = data.spo2 || '--';
-
-                    if (data.svm) {
-                        const svmVal = parseFloat(data.svm).toFixed(2);
-                        document.getElementById('val-svm-box').innerText = svmVal;
-                        document.getElementById('sum-svm').innerText = svmVal;
-
-                        // Logika sederhana memunculkan alert jika SVM tinggi
-                        if (svmVal >= 1.4) {
-                            document.getElementById('alertBanner').style.display = 'flex';
-                            document.getElementById('alert-svm').innerText = svmVal;
-                            document.getElementById('val-status').innerText = 'Bahaya!';
-                            document.getElementById('val-status').style.color = '#ef4444';
-
-                            const now = new Date();
-                            document.getElementById('alert-time').innerText = now.getHours() + ":" + String(now
-                                .getMinutes()).padStart(2, '0') + ":" + String(now.getSeconds()).padStart(2, '0');
-                        } else {
-                            document.getElementById('val-status').innerText = 'Normal';
-                            document.getElementById('val-status').style.color = '#0f172a';
-                        }
-                    }
-
-                    if (data.pitch) {
-                        const pitchVal = parseFloat(data.pitch).toFixed(0);
-                        document.getElementById('val-pitch').innerText = (pitchVal > 0 ? '+' : '') + pitchVal;
-                        // Kalkulasi persentase bar (-90 ke 90 menjadi 0% ke 100%)
-                        let pctPitch = ((parseFloat(pitchVal) + 90) / 180) * 100;
-                        document.getElementById('bar-pitch').style.width = pctPitch + '%';
-                    }
-                    if (data.roll) {
-                        const rollVal = parseFloat(data.roll).toFixed(0);
-                        document.getElementById('val-roll').innerText = (rollVal > 0 ? '+' : '') + rollVal;
-                        let pctRoll = ((parseFloat(rollVal) + 90) / 180) * 100;
-                        document.getElementById('bar-roll').style.width = pctRoll + '%';
-                    }
-
-                    // Update Chart
-                    if (svmChart) {
-                        const timeNow = new Date().toLocaleTimeString('id-ID', {
-                            hour12: false,
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            second: '2-digit'
-                        });
-                        svmChart.data.labels.push(timeNow);
-                        svmChart.data.datasets[0].data.push(data.svm);
-
-                        if (svmChart.data.labels.length > 20) {
-                            svmChart.data.labels.shift();
-                            svmChart.data.datasets[0].data.shift();
-                        }
-                        svmChart.update();
-                    }
-                }
-            } catch (error) {
-                console.error("Gagal menarik data dari server:", error);
-            }
-        }
-
-        if (perangkatId) {
-            fetchSensorData();
-            setInterval(fetchSensorData, 2000); // Polling setiap 2 detik
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            setGauge('gaugeRoll', {{ $sensorTerbaru->roll ?? 0 }}, -90, 90);
+            setGauge('gaugePitch', {{ $sensorTerbaru->pitch ?? 0 }}, -90, 90);
+            setGauge('gaugeSvm', {{ $sensorTerbaru->svm ?? 0 }}, 0, 3);
+        });
     </script>
+
 </body>
 
 </html>
