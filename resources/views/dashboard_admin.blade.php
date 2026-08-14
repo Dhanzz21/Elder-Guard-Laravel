@@ -8,7 +8,6 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
-    <!-- Chart.js untuk Grafik -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -32,6 +31,10 @@
             --red: #ef4444;
         }
 
+        .text-danger {
+            color: var(--red) !important;
+        }
+
         body {
             background-color: var(--bg);
             color: #333;
@@ -39,85 +42,117 @@
             overflow-x: hidden;
         }
 
-        /* TOPBAR SERAGAM */
-        .top-navbar {
+        /* --- TOPBAR SERAGAM --- */
+        .topbar {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             height: 72px;
             background: var(--navy);
-            color: white;
-            padding: 0 28px 0 20px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            padding: 0 28px 0 20px;
             z-index: 110;
         }
 
-        .nav-left {
+        .hamburger-menu {
+            display: none;
+            font-size: 28px;
+            color: #fff;
+            cursor: pointer;
+            margin-right: 12px;
+            transition: 0.2s;
+        }
+
+        .hamburger-menu:hover {
+            color: var(--blue);
+        }
+
+        .topbar-brand {
             display: flex;
             align-items: center;
             gap: 12px;
+            color: #fff;
         }
 
-        .nav-left h1 {
-            font-size: 17px;
-            font-weight: 700;
-            margin: 0;
-        }
-
-        .nav-left p {
-            font-size: 11.5px;
-            color: #93a2c9;
-            margin: 0;
-            margin-top: 1px;
-        }
-
-        .nav-center {
-            flex-grow: 1;
+        .topbar-brand .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--blue);
             display: flex;
+            align-items: center;
             justify-content: center;
+            font-size: 18px;
         }
 
-        .search-bar {
+        .topbar-brand .brand-text {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .topbar-search {
+            flex: 1;
+            max-width: 420px;
+            margin: 0 40px;
+            position: relative;
+        }
+
+        .topbar-search input {
+            width: 100%;
             background: #1c2a56;
             border: 1px solid #2b3a68;
-            border-radius: 30px;
-            padding: 9px 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            width: 400px;
-            max-width: 100%;
-        }
-
-        .search-bar input {
-            background: transparent;
-            border: none;
             color: #e6ebfb;
-            outline: none;
-            width: 100%;
+            border-radius: 30px;
+            padding: 10px 16px 10px 40px;
             font-size: 13.5px;
+            outline: none;
         }
 
-        .nav-right {
+        .topbar-search input::placeholder {
+            color: #8592b8;
+        }
+
+        .topbar-search i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8592b8;
+        }
+
+        .topbar-right {
             display: flex;
             align-items: center;
-            gap: 18px;
+            gap: 16px;
         }
 
-        .nav-icon {
+        .topbar-bell {
             width: 40px;
             height: 40px;
             border-radius: 50%;
             background: #1c2a56;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            color: #cfd8f5;
             font-size: 17px;
-            color: #cbd5e1;
+            position: relative;
+            flex-shrink: 0;
             cursor: pointer;
+        }
+
+        .topbar-bell .dot {
+            position: absolute;
+            top: 8px;
+            right: 9px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--red);
+            border: 1.5px solid var(--navy);
         }
 
         .admin-profile {
@@ -130,6 +165,12 @@
             font-weight: 500;
             font-size: 13.5px;
             color: #e6ebfb;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .admin-profile:hover {
+            background: #2b3a68;
         }
 
         .admin-profile .avatar-circle {
@@ -143,9 +184,10 @@
             align-items: center;
             font-weight: 700;
             font-size: 12px;
+            flex-shrink: 0;
         }
 
-        /* --- SIDEBAR CSS --- */
+        /* --- SIDEBAR --- */
         .sidebar {
             width: 80px;
             background: var(--navy);
@@ -156,9 +198,10 @@
             height: calc(100vh - 72px);
             top: 72px;
             left: 0;
-            z-index: 100;
+            z-index: 105;
             padding-top: 22px;
             border-right: 1px solid #1e2c58;
+            transition: transform 0.3s ease;
         }
 
         .sidebar-logo {
@@ -190,22 +233,43 @@
             padding-bottom: 22px;
         }
 
-        /* MAIN CONTENT */
-        .main-wrapper {
-            margin-left: 80px;
-            margin-top: 72px;
-            padding: 28px 34px 40px;
+        .sidebar-overlay {
+            position: fixed;
+            top: 72px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 72px);
+            background: rgba(15, 23, 42, 0.6);
+            z-index: 104;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
 
-        .page-header {
-            margin-bottom: 22px;
+        .sidebar-overlay.show {
+            display: block;
+            opacity: 1;
         }
 
-        /* MAIN CONTENT */
+        /* --- MAIN CONTENT SERAGAM --- */
+        .main-content,
         .main-wrapper {
+            /* Margin kiri HARUS sama dengan lebar sidebar (80px) */
             margin-left: 80px;
-            margin-top: 72px;
-            padding: 28px 34px 40px;
+            margin-top: 100px;
+            /* Tinggi topbar */
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content,
+        .content {
+            /* Spasi dalam: Atas(28px) KananKiri(34px) Bawah(40px) */
+            padding: 100px 34px 40px;
+
+            /* Agar tidak melar di monitor ultra-wide (Merapikan ke tengah) */
+            max-width: 1350px;
+            margin: 0 auto;
+            width: 100%;
         }
 
         .page-header {
@@ -224,13 +288,13 @@
             margin-top: 3px;
         }
 
-        /* CARDS & GRIDS */
         .card {
             background: #fff;
             border-radius: 18px;
             box-shadow: 0 5px 20px rgba(15, 23, 42, 0.04);
             padding: 24px;
             margin-bottom: 26px;
+            overflow-x: auto;
         }
 
         .card-title {
@@ -293,7 +357,6 @@
             margin-bottom: 26px;
         }
 
-        /* PATIENT CARD ELEMENTS */
         .patient-head {
             display: flex;
             align-items: center;
@@ -312,6 +375,7 @@
             justify-content: center;
             font-weight: 700;
             font-size: 18px;
+            flex-shrink: 0;
         }
 
         .patient-head h2 {
@@ -397,7 +461,6 @@
             padding: 12px 14px;
         }
 
-        /* GAUGES */
         .gauge-row {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -453,7 +516,6 @@
             font-weight: 700;
         }
 
-        /* TABLES */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -495,31 +557,76 @@
             color: #ef4444;
         }
 
+        /* RESPONSIVE BREAKPOINTS */
+        @media (max-width: 1100px) {
 
-        .badge-aktif {
-            background: #dcfce7;
-            color: #16a34a;
-        }
-
-        .badge-bahaya {
-            background: #fee2e2;
-            color: #ef4444;
-        }
-
-        @media (max-width: 1024px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
+            .main-content,
+            .main-wrapper {
+                margin-left: 0;
+                /* Tarik konten ke kiri penuhi layar karena sidebar sembunyi */
             }
-        }
 
-        @media (max-width: 768px) {
+            .hamburger-menu {
+                display: block;
+            }
+
+            .topbar-brand .brand-text {
+                display: none;
+            }
+
+            .topbar-search {
+                display: none;
+            }
+
             .sidebar {
                 transform: translateX(-100%);
             }
 
-            .main-wrapper {
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
                 margin-left: 0;
                 padding: 20px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .admin-profile .profile-name {
+                display: none;
+            }
+
+            .admin-profile {
+                padding: 4px;
+                background: transparent;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            .main-content,
+            .content {
+                padding: 20px;
+                /* Perkecil jarak napas agar di HP tidak buang tempat */
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gauge-row {
+                grid-template-columns: 1fr;
+            }
+
+            .vitals-grid {
+                grid-template-columns: 1fr 1fr;
             }
         }
     </style>
@@ -527,33 +634,16 @@
 
 <body>
 
-    <!-- TOP NAVBAR SERAGAM -->
-    <nav class="top-navbar">
-        <div class="nav-left">
-            <i class="bi bi-heart-pulse-fill" style="color: #3b82f6; font-size: 24px;"></i>
-            <div>
-                <h1>FallSense</h1>
-                <p>Sistem Deteksi Jatuh Lansia</p>
-            </div>
-        </div>
-        <div class="nav-center">
-            <div class="search-bar">
-                <i class="bi bi-search" style="color: #94a3b8;"></i>
-                <input type="text" placeholder="Cari data global (Pasien/Alat)...">
-            </div>
-        </div>
-        <div class="nav-right">
-            <div class="nav-icon"><i class="bi bi-bell"></i></div>
-            <div class="admin-profile">
-                <div class="avatar-circle">{{ substr(Auth::user()->name, 0, 2) }}</div>
-                <span>{{ Auth::user()->name }}</span>
-            </div>
-        </div>
-    </nav>
+    <!-- PANGGIL TOPBAR KOMPONEN -->
+    @include('layouts.topbar')
 
+    <!-- OVERLAY SIDEBAR -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- PANGGIL SIDEBAR KOMPONEN -->
     @include('layouts.sidebar')
 
-    <div class="main-wrapper">
+    <main class="main-content">
         <div class="page-header">
             <h2>Pusat Kendali Admin</h2>
             <p>Pantau status perangkat, statistik global, dan sampel pemantauan real-time.</p>
@@ -588,7 +678,6 @@
         </div>
 
         @if ($pasien)
-            <!-- LIVE MONITORING (SAMPEL PASIEN PERTAMA) -->
             <div class="card-title"><i class="bi bi-broadcast text-danger"></i> Live Monitoring Panel (Sampel:
                 {{ $pasien->nama_lengkap }})</div>
             <div class="dashboard-grid">
@@ -635,7 +724,7 @@
                     </div>
                 </div>
 
-                <!-- ORIENTASI TUBUH (GAUGES & CHART) -->
+                <!-- ORIENTASI TUBUH -->
                 <div class="card" style="margin-bottom: 0;">
                     <div class="card-title"><i class="bi bi-compass" style="color:#3b82f6;"></i> Orientasi Tubuh &
                         Grafik Real-time</div>
@@ -695,7 +784,6 @@
             </div>
         @endif
 
-        <!-- TABEL LOG KEJADIAN GLOBAL -->
         <div class="card">
             <div class="card-title"><i class="bi bi-clock-history text-danger"></i> Log Kejadian Jatuh Global (Seluruh
                 Sistem)</div>
@@ -735,10 +823,16 @@
                 </tbody>
             </table>
         </div>
-    </div>
+    </main>
 
     <script>
-        // Update Circular Gauges
+        // Sidebar Toggle Mobile
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('show');
+            document.querySelector('.sidebar-overlay').classList.toggle('show');
+        }
+
+        // Circular Gauges
         function setGauge(id, value, min, max) {
             const el = document.getElementById(id);
             if (!el) return;
@@ -753,7 +847,6 @@
             setGauge('gaugePitch', {{ $sensorTerbaru->pitch ?? 0 }}, -90, 90);
             setGauge('gaugeYaw', {{ $sensorTerbaru->yaw ?? 0 }}, 0, 360);
 
-            // Setup Real-time Chart
             const ctx = document.getElementById('svmChart');
             if (ctx) {
                 window.svmChart = new Chart(ctx.getContext('2d'), {

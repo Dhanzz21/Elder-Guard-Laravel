@@ -10,7 +10,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
 
     <style>
-        /* --- BASE CSS DARI DASHBOARD ADMIN --- */
         * {
             margin: 0;
             padding: 0;
@@ -38,7 +37,6 @@
             overflow-x: hidden;
         }
 
-        /* --- TOPBAR SERAGAM --- */
         .topbar {
             position: fixed;
             top: 0;
@@ -51,6 +49,43 @@
             justify-content: space-between;
             padding: 0 28px 0 20px;
             z-index: 110;
+        }
+
+        .hamburger-menu {
+            display: none;
+            /* Disembunyikan di Desktop */
+            font-size: 28px;
+            color: #fff;
+            cursor: pointer;
+            margin-right: 12px;
+            transition: 0.2s;
+        }
+
+        .hamburger-menu:hover {
+            color: var(--blue);
+        }
+
+        .topbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+        }
+
+        .topbar-brand .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .topbar-brand .brand-text {
+            font-weight: 700;
+            font-size: 18px;
         }
 
         .topbar-search {
@@ -83,29 +118,6 @@
             color: #8592b8;
         }
 
-        .topbar-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #fff;
-        }
-
-        .topbar-brand .brand-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--blue);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-
-        .topbar-brand span {
-            font-weight: 700;
-            font-size: 16px;
-        }
-
         .topbar-right {
             display: flex;
             align-items: center;
@@ -124,6 +136,7 @@
             font-size: 17px;
             position: relative;
             flex-shrink: 0;
+            cursor: pointer;
         }
 
         .topbar-bell .dot {
@@ -137,21 +150,39 @@
             border: 1.5px solid var(--navy);
         }
 
-        .topbar-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--blue);
-            color: #fff;
-            font-weight: 600;
-            font-size: 13px;
+        /* Profile Button / Trigger */
+        .admin-profile {
             display: flex;
             align-items: center;
+            gap: 10px;
+            background: #1c2a56;
+            padding: 6px 14px 6px 6px;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 13.5px;
+            color: #e6ebfb;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .admin-profile:hover {
+            background: #2b3a68;
+        }
+
+        .admin-profile .avatar-circle {
+            width: 30px;
+            height: 30px;
+            background: var(--blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
             justify-content: center;
+            align-items: center;
+            font-weight: 700;
+            font-size: 12px;
             flex-shrink: 0;
         }
 
-        /* --- SIDEBAR --- */
         .sidebar {
             width: 80px;
             background: var(--navy);
@@ -162,9 +193,10 @@
             height: calc(100vh - 72px);
             top: 72px;
             left: 0;
-            z-index: 100;
+            z-index: 105;
             padding-top: 22px;
             border-right: 1px solid #1e2c58;
+            transition: transform 0.3s ease;
         }
 
         .sidebar-logo {
@@ -196,16 +228,46 @@
             padding-bottom: 22px;
         }
 
-        /* --- MAIN CONTENT SERAGAM --- */
-        .main-content {
-            margin-left: 80px;
-            margin-top: 72px;
-            padding: 28px 34px 40px;
-            max-width: 1400px;
-            margin-inline: auto;
+        .sidebar-overlay {
+            position: fixed;
+            top: 72px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 72px);
+            background: rgba(15, 23, 42, 0.6);
+            z-index: 104;
+            /* Tepat di bawah Sidebar */
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
 
-        /* --- KUSTOMISASI MANAJEMEN PASIEN --- */
+        .sidebar-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+
+        /* --- MAIN CONTENT SERAGAM --- */
+        .main-content,
+        .main-wrapper {
+            /* Margin kiri HARUS sama dengan lebar sidebar (80px) */
+            margin-left: 80px;
+            margin-top: 72px;
+            /* Tinggi topbar */
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content,
+        .content {
+            /* Spasi dalam: Atas(28px) KananKiri(34px) Bawah(40px) */
+            padding: 100px 34px 40px;
+
+            /* Agar tidak melar di monitor ultra-wide (Merapikan ke tengah) */
+            max-width: 1350px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
         .page-header {
             display: flex;
             justify-content: space-between;
@@ -232,7 +294,6 @@
             gap: 10px;
         }
 
-        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -275,7 +336,6 @@
             margin: 0;
         }
 
-        /* Card & Table */
         .card {
             background: white;
             border-radius: 18px;
@@ -294,7 +354,15 @@
             gap: 10px;
         }
 
-        /* Filter / Search Bar */
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .filter-bar {
             display: flex;
             flex-wrap: wrap;
@@ -337,15 +405,6 @@
             gap: 8px;
         }
 
-        .section-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--ink);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
@@ -368,10 +427,6 @@
             border-bottom: 1px solid #f1f5f9;
             color: #334155;
             font-size: 13.5px;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
         }
 
         tr:hover td {
@@ -457,7 +512,6 @@
             font-weight: 600;
         }
 
-        /* Modals */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -535,29 +589,79 @@
             margin-top: 25px;
         }
 
+        /* Menangkap iPad Pro 11" dan Tablet lainnya (Up to 1100px) */
         @media (max-width: 1100px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
 
-        @media (max-width: 768px) {
+            /* Tampilkan Tombol Hamburger */
+            .hamburger-menu {
+                display: block;
+            }
+
+            /* Sembunyikan Teks Logo di Topbar agar hemat tempat */
+            .topbar-brand .brand-text {
+                display: none;
+            }
+
+            .topbar-search {
+                display: none;
+            }
+
+            /* Sembunyikan bar pencarian global */
+
+            /* Sidebar bersembunyi di kiri layar */
             .sidebar {
                 transform: translateX(-100%);
             }
 
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            /* Konten Utama meluas memenuhi layar */
             .main-content {
                 margin-left: 0;
                 padding: 20px;
             }
 
+            /* Grid Statistik menyusut */
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .admin-profile .profile-name {
+                display: none;
+            }
+
+            .admin-profile {
+                padding: 4px;
+                background: transparent;
+            }
+        }
+
+        /* Menangkap Layar HP (Mobile) */
+        @media (max-width: 768px) {
             .stats-grid {
                 grid-template-columns: 1fr;
             }
 
-            .topbar-search,
-            .topbar-brand span {
-                display: none;
+            .header-actions {
+                width: 100%;
+            }
+
+            .header-actions .btn-add {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-actions .btn-add,
+            .filter-actions .btn-action {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
@@ -565,21 +669,12 @@
 
 <body>
 
-    <!-- TOPBAR SERAGAM -->
     <header class="topbar">
-        <div class="topbar-brand">
-            <div class="brand-icon"><i class="bi bi-heart-pulse-fill"></i></div>
-            <span>FallSense</span>
-        </div>
-        <div class="topbar-search">
-            <i class="bi bi-search"></i>
-            <input type="text" placeholder="Cari data pasien atau perangkat...">
-        </div>
-        <div class="topbar-right">
-            <div class="topbar-bell"><i class="bi bi-bell-fill"></i><span class="dot"></span></div>
-            <div class="topbar-avatar">{{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 2)) }}</div>
-        </div>
+        @include('layouts.topbar')
     </header>
+
+    <!-- Overlay untuk Sidebar saat mode tablet/mobile -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     @include('layouts.sidebar')
 
@@ -590,11 +685,10 @@
                 <p>Kelola data lansia sekaligus perangkat IoT yang terpasang pada mereka.</p>
             </div>
             <div class="header-actions">
-                <button class="btn-add outline"
-                    onclick="document.getElementById('modalAddPerangkat').classList.add('active')">
+                <button class="btn-add outline" onclick="openModal('modalAddPerangkat')">
                     <i class="bi bi-cpu"></i> Tambah Perangkat
                 </button>
-                <button class="btn-add" onclick="document.getElementById('modalAdd').classList.add('active')">
+                <button class="btn-add" onclick="openModal('modalAdd')">
                     <i class="bi bi-plus-lg"></i> Tambah Pasien
                 </button>
             </div>
@@ -640,14 +734,12 @@
             </div>
         </div>
 
-        <!-- Tabel Data Pasien -->
         <div class="card">
             <div class="table-header">
                 <div class="section-title"><i class="bi bi-people" style="color:var(--blue);"></i> Daftar Lansia
                     Dipantau</div>
             </div>
 
-            <!-- Filter Pencarian: nama pasien, umur, alat -->
             <form method="GET" action="{{ url('/manajemen-pasien') }}" class="filter-bar">
                 <div class="filter-field">
                     <label>Nama Pasien</label>
@@ -676,7 +768,7 @@
                     <button type="submit" class="btn-add"><i class="bi bi-search"></i> Cari</button>
                     @if (request('nama') || request('usia') || request('perangkat_id'))
                         <a href="{{ url('/manajemen-pasien') }}" class="btn-action"
-                            style="padding: 9px 14px;">Reset</a>
+                            style="padding: 9px 14px; display: flex; align-items: center;">Reset</a>
                     @endif
                 </div>
             </form>
@@ -751,7 +843,6 @@
             </table>
         </div>
 
-        <!-- Tabel Manajemen Perangkat (Alat IoT) -->
         <div class="card">
             <div class="table-header">
                 <div class="section-title"><i class="bi bi-cpu-fill" style="color:#8b5cf6;"></i> Manajemen Perangkat
@@ -802,7 +893,7 @@
                     @empty
                         <tr>
                             <td colspan="5" style="text-align: center; padding: 20px; color: #64748b;">Belum ada
-                                perangkat terdaftar. Tambahkan alat ESP32 dulu sebelum mendaftarkan pasien baru.</td>
+                                perangkat terdaftar.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -810,7 +901,7 @@
         </div>
     </main>
 
-    <!-- Modals (Add/Edit/Delete Pasien & Perangkat) -->
+    <!-- MODAL TAMBAH PASIEN -->
     <div id="modalAdd" class="modal-overlay">
         <div class="modal-box">
             <h3 style="margin-bottom: 20px;">Tambah Data Pasien</h3>
@@ -821,12 +912,8 @@
                     <input type="text" name="nama_lengkap" required>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="form-group">
-                        <label>Usia</label>
-                        <input type="number" name="usia" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Jenis Kelamin</label>
+                    <div class="form-group"><label>Usia</label><input type="number" name="usia" required></div>
+                    <div class="form-group"><label>Jenis Kelamin</label>
                         <select name="jenis_kelamin" required>
                             <option value="L">Laki-laki</option>
                             <option value="P">Perempuan</option>
@@ -844,34 +931,27 @@
                             <option value="" disabled>Tidak ada perangkat kosong tersedia</option>
                         @endforelse
                     </select>
-                    <small class="hint">Belum ada alat yang cocok? Tambahkan dulu lewat tombol "Tambah
-                        Perangkat".</small>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn-action"
-                        onclick="document.getElementById('modalAdd').classList.remove('active')">Batal</button>
+                    <button type="button" class="btn-action" onclick="closeModal('modalAdd')">Batal</button>
                     <button type="submit" class="btn-add">Simpan Pasien</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- MODAL EDIT PASIEN -->
     <div id="modalEdit" class="modal-overlay">
         <div class="modal-box">
             <h3 style="margin-bottom: 20px;">Edit Data Pasien</h3>
             <form id="formEdit" method="POST">
                 @csrf @method('PUT')
-                <div class="form-group">
-                    <label>Nama Lengkap</label>
-                    <input type="text" name="nama_lengkap" id="edit_nama" required>
-                </div>
+                <div class="form-group"><label>Nama Lengkap</label><input type="text" name="nama_lengkap"
+                        id="edit_nama" required></div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="form-group">
-                        <label>Usia</label>
-                        <input type="number" name="usia" id="edit_usia" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Jenis Kelamin</label>
+                    <div class="form-group"><label>Usia</label><input type="number" name="usia" id="edit_usia"
+                            required></div>
+                    <div class="form-group"><label>Jenis Kelamin</label>
                         <select name="jenis_kelamin" id="edit_jk" required>
                             <option value="L">Laki-laki</option>
                             <option value="P">Perempuan</option>
@@ -879,101 +959,87 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn-action"
-                        onclick="document.getElementById('modalEdit').classList.remove('active')">Batal</button>
+                    <button type="button" class="btn-action" onclick="closeModal('modalEdit')">Batal</button>
                     <button type="submit" class="btn-add" style="background: #f59e0b;">Update Data</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- MODAL DELETE PASIEN -->
     <div id="modalDelete" class="modal-overlay">
         <div class="modal-box" style="text-align: center;">
             <i class="bi bi-exclamation-triangle-fill" style="font-size: 50px; color: #ef4444;"></i>
             <h3 style="margin-top: 15px;">Hapus Data Pasien?</h3>
             <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">Semua data sensor dan riwayat kejadian
-                milik pasien ini akan ikut terhapus permanen.</p>
+                akan terhapus permanen.</p>
             <form id="formDelete" method="POST">
                 @csrf @method('DELETE')
                 <div style="display: flex; justify-content: center; gap: 10px;">
-                    <button type="button" class="btn-action"
-                        onclick="document.getElementById('modalDelete').classList.remove('active')">Batal</button>
+                    <button type="button" class="btn-action" onclick="closeModal('modalDelete')">Batal</button>
                     <button type="submit" class="btn-add" style="background: #ef4444;">Ya, Hapus</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- MODAL TAMBAH PERANGKAT -->
     <div id="modalAddPerangkat" class="modal-overlay">
         <div class="modal-box">
             <h3 style="margin-bottom: 20px;"><i class="bi bi-cpu-fill" style="color:#8b5cf6;"></i> Tambah Perangkat
                 Baru</h3>
             <form action="{{ route('perangkat.store') }}" method="POST">
                 @csrf
-                <div class="form-group">
-                    <label>Nama Perangkat</label>
-                    <input type="text" name="nama_perangkat" required placeholder="Contoh: Node ESP32 #04">
-                </div>
-                <div class="form-group">
-                    <label>MAC Address (ESP32)</label>
-                    <input type="text" name="mac_address" required placeholder="Contoh: 30:AE:A4:07:0D:64">
-                </div>
-                <div class="form-group">
-                    <label>Pasangkan ke Pasien (opsional)</label>
+                <div class="form-group"><label>Nama Perangkat</label><input type="text" name="nama_perangkat"
+                        required placeholder="Contoh: Node ESP32 #04"></div>
+                <div class="form-group"><label>MAC Address (ESP32)</label><input type="text" name="mac_address"
+                        required placeholder="Contoh: 30:AE:A4:07:0D:64"></div>
+                <div class="form-group"><label>Pasangkan ke Pasien (opsional)</label>
                     <select name="pasien_id">
                         <option value="">-- Belum dipasangkan --</option>
-                        @forelse(($pasiens ?? []) as $p)
+                        @foreach ($pasiens ?? [] as $p)
                             <option value="{{ $p->id }}">{{ $p->nama_lengkap }}</option>
-                        @empty
-                            <option value="" disabled>Belum ada pasien terdaftar</option>
-                        @endforelse
+                        @endforeach
                     </select>
-                    <small class="hint">Bisa dikosongkan dulu lalu dipasangkan belakangan lewat "Edit
-                        Perangkat".</small>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-action"
-                        onclick="document.getElementById('modalAddPerangkat').classList.remove('active')">Batal</button>
+                        onclick="closeModal('modalAddPerangkat')">Batal</button>
                     <button type="submit" class="btn-add" style="background: #8b5cf6;">Simpan Perangkat</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- MODAL EDIT PERANGKAT -->
     <div id="modalEditPerangkat" class="modal-overlay">
         <div class="modal-box">
             <h3 style="margin-bottom: 20px;"><i class="bi bi-cpu-fill" style="color:#8b5cf6;"></i> Edit Perangkat
             </h3>
             <form id="formEditPerangkat" method="POST">
                 @csrf @method('PUT')
-                <div class="form-group">
-                    <label>Nama Perangkat</label>
-                    <input type="text" name="nama_perangkat" id="edit_nama_perangkat" required>
-                </div>
-                <div class="form-group">
-                    <label>MAC Address</label>
-                    <input type="text" name="mac_address" id="edit_mac_perangkat" required>
-                </div>
-                <div class="form-group">
-                    <label>Dipasangkan ke Pasien</label>
+                <div class="form-group"><label>Nama Perangkat</label><input type="text" name="nama_perangkat"
+                        id="edit_nama_perangkat" required></div>
+                <div class="form-group"><label>MAC Address</label><input type="text" name="mac_address"
+                        id="edit_mac_perangkat" required></div>
+                <div class="form-group"><label>Dipasangkan ke Pasien</label>
                     <select name="pasien_id" id="edit_pasien_perangkat">
                         <option value="">-- Lepas dari pasien --</option>
-                        @forelse(($pasiens ?? []) as $p)
+                        @foreach ($pasiens ?? [] as $p)
                             <option value="{{ $p->id }}">{{ $p->nama_lengkap }}</option>
-                        @empty
-                            <option value="" disabled>Belum ada pasien terdaftar</option>
-                        @endforelse
+                        @endforeach
                     </select>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-action"
-                        onclick="document.getElementById('modalEditPerangkat').classList.remove('active')">Batal</button>
+                        onclick="closeModal('modalEditPerangkat')">Batal</button>
                     <button type="submit" class="btn-add" style="background: #f59e0b;">Update Perangkat</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- MODAL DELETE PERANGKAT -->
     <div id="modalDeletePerangkat" class="modal-overlay">
         <div class="modal-box" style="text-align: center;">
             <i class="bi bi-exclamation-triangle-fill" style="font-size: 50px; color: #ef4444;"></i>
@@ -984,38 +1050,56 @@
                 @csrf @method('DELETE')
                 <div style="display: flex; justify-content: center; gap: 10px;">
                     <button type="button" class="btn-action"
-                        onclick="document.getElementById('modalDeletePerangkat').classList.remove('active')">Batal</button>
+                        onclick="closeModal('modalDeletePerangkat')">Batal</button>
                     <button type="submit" class="btn-add" style="background: #ef4444;">Ya, Hapus</button>
                 </div>
             </form>
         </div>
     </div>
 
+
     <script>
+        // Membuka Modal
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+        // Menutup Modal
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // Fungsi Buka Tutup Sidebar (Hamburger Menu)
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('show');
+            document.querySelector('.sidebar-overlay').classList.toggle('show');
+        }
+
+        // Script Eksekusi Edit & Delete Pasien
         function openEdit(id, nama, usia, jk) {
             document.getElementById('edit_nama').value = nama;
             document.getElementById('edit_usia').value = usia;
             document.getElementById('edit_jk').value = jk;
             document.getElementById('formEdit').action = '/manajemen-pasien/' + id;
-            document.getElementById('modalEdit').classList.add('active');
+            openModal('modalEdit');
         }
 
         function openDelete(id) {
             document.getElementById('formDelete').action = '/manajemen-pasien/' + id;
-            document.getElementById('modalDelete').classList.add('active');
+            openModal('modalDelete');
         }
 
+        // Script Eksekusi Edit & Delete Perangkat
         function openEditPerangkat(id, nama, mac, pasienId) {
             document.getElementById('edit_nama_perangkat').value = nama;
             document.getElementById('edit_mac_perangkat').value = mac;
             document.getElementById('edit_pasien_perangkat').value = pasienId || '';
             document.getElementById('formEditPerangkat').action = '/manajemen-perangkat/' + id;
-            document.getElementById('modalEditPerangkat').classList.add('active');
+            openModal('modalEditPerangkat');
         }
 
         function openDeletePerangkat(id) {
             document.getElementById('formDeletePerangkat').action = '/manajemen-perangkat/' + id;
-            document.getElementById('modalDeletePerangkat').classList.add('active');
+            openModal('modalDeletePerangkat');
         }
     </script>
 </body>

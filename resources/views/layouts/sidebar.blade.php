@@ -15,17 +15,20 @@
     </a>
 
     <!-- 3. Riwayat Kejadian -->
-    <a href="#" class="nav-item" title="Riwayat Kejadian">
+    <a href="{{ route('riwayat.index') }}" class="nav-item {{ request()->routeIs('riwayat.index') ? 'active' : '' }}"
+        title="Riwayat Kejadian">
         <i class="bi bi-clock-history"></i>
     </a>
 
     <!-- 4. Notifikasi -->
-    <a href="#" class="nav-item" title="Notifikasi">
+    <a href="{{ route('notifikasi.index') }}"
+        class="nav-item {{ request()->routeIs('notifikasi.index') ? 'active' : '' }}" title="Notifikasi WA">
         <i class="bi bi-bell"></i>
     </a>
 
     <!-- 5. Pengaturan Akun -->
-    <a href="#" class="nav-item" title="Pengaturan Akun">
+    <a href="{{ route('pengaturan.index') }}" class="nav-item {{ request()->routeIs('pengaturan.*') ? 'active' : '' }}"
+        title="Pengaturan Akun">
         <i class="bi bi-gear"></i>
     </a>
 
